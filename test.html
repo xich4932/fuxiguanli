@@ -1,0 +1,74 @@
+<span style="font-family:Times New Roman;"><!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset=" GBK">
+    <title>动态创建DIV并设置样式</title>
+    <style type="text/css">
+    #parent{
+      margin: 0 200px;
+      background:blue;
+    }
+    #vote{
+     background-color:;
+     font-family:"楷体";
+     font-size:18px;
+     margin: 0 300px;
+     padding:10px  80px;
+     background:green;
+    }
+    .input{
+      color:black;
+      margin:10px 0px;
+      display:block;
+      text-align:center;
+    }
+    .show{
+      background-color:#abcdef;
+      color:black;
+      font-family:"Times New Roman","楷体";
+      text-align:center;
+      border-style:1px solid blue;
+    }
+    </style>
+    <script type="text/javascript">
+    var id=1;
+    function add(){
+     var vote=document.getElementById("vote");
+     var button=document.getElementById("button");
+     var input=document.createElement("input");
+        input.type="text";
+        input.className="input";
+        id++;
+        input.id="input_"+id;
+        input.placeholder=input.id;
+      
+      vote.insertBefore(input,button);
+    }
+    function show(){
+    //getElementsByTagName()
+       var input=document.getElementsByTagName("input");
+       var parent=document.getElementById("parent");
+       var div=document.createElement("div");
+       div.className="show";
+       for(var i=0;i<input.length;i++){
+           if("text"==input[i].type){
+             var p=document.createElement("p");
+             p.innerHTML=" Value:"+input[i].value;
+             div.appendChild(p);
+          }
+       }
+       parent.appendChild(div);
+    }
+    </script>
+    </head>
+    <body>
+    <div id="parent">
+      <div id="vote">
+       <input type="input" class="input" placeholder="default" id="input_1" />
+       <input type="button" value="add" id="button" onclick="add()" />
+       <input type="button" value="show" id="show" onclick="show()" />
+      </div>
+    </div>
+    </body>
+    </html></span><span style="font-family:KaiTi_GB2312;">
+    </span>

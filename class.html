@@ -24,7 +24,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
     -->
-    <div id="add_course">
+    <div>
+      <div id="course_table" >
         <table class="table" id = "add_course_table">
           <thead>
             <tr>
@@ -35,23 +36,31 @@
             </tr>
           </thead>
           <tbody id="course">
+            
             <tr>
               <th scope="row">1</th>
               <td>
-                <input class="form-control" type="text" placeholder="input course name" aria-label="default input example">
+                <input class="form-control" type="text" placeholder="input course name" aria-label="default input example" input="course_0">
               </td>
               <td>
-                <input type="date" id="final_date0">
+                <input type="date" id="final_0">
               </td>
               <td>
-                <input type="number" id="num_course">
+                <input type="number" id="num_0">
               </td>
             </tr>
+            
           </tbody>
           </table>
     </div>
-  
+    </div>
+    <!--
+      <div ">
+      <button type="button" class="btn btn-primary" id="addbtn" onclick="printing()">check</button>
+    </div>
+    -->
       <div>
+        
         <div class="position-absolute bottom- start-50 translate-middle-x">
             <button type="button" class="btn btn-primary" id="addbtn" onclick="add_course()">Add new course</button>
         </div>
@@ -60,10 +69,10 @@
             <a class="btn btn-primary" href="calendar.html" role="button">Next</a>
           </div>
           <div class="position-absolute bottom-0 start-0">
-            <a class="btn btn-primary" href="index.html" role="button">Prev</a>
+            <a class="btn btn-primary" href="numClass.html" role="button">Prev</a>
           </div>
           <div class="position-absolute bottom-0 start-50 translate-middle-x">
-            <a class="btn btn-primary" download="event.ics" role="button" id="createCal">Download</a>
+            <a class="btn btn-primary" download="event.ics" role="button" id="createCal" onclick="create()">Download</a>
            </div>
         </div>
     </div>
