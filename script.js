@@ -28,31 +28,11 @@ function checking(){
 
 var total = 1;
 
-
-
 function add_course(){
-    /*
-    rows = document.getElementById("nums").value
-    console.log(rows)
-    
-    total += 1
-    str = ""
-    for(var d = 0; d < rows; d++){
-        str += '<tr><th scope="row">'+d+'</th><td><input class="form-control" type="text" placeholder="input course name" aria-label="default input example"></td><td><input type="date" id="final_date'+d+'"></td><td><input type="number" id="num_course"></td></tr>'
-    }
-    */
     add = document.getElementById("course");
     str = '<tr><th scope="row">'+ (total+1)+'</th><td><input class="form-control" type="text" placeholder="input course name" aria-label="default input example" id="course_'+total+'"></td><td><input type="date" id="final_'+total+'"></td><td><input type="number" id="num_'+total+'"></td></tr>'
     total += 1
     $('#add_course_table tr:last').after(str);
-    //add.innerHTML = str;
-   /*
-    var tab = document.getElementById("course_table");
-    var n = document.getElementById("final_date0").rowIndex + 1
-    var tr = tab.insertRow(n)
-    var td = tr.insertCell(0)
-    td.innerHTML='new '+Math.random();
-    */
 }
    
 function printing(){
@@ -79,7 +59,8 @@ function calLastDay(month, year){
 var final_arr=[];
 var course_arr = [];
 var num_arr = []
-
+var time_start = []
+var time_end = []
 
 function create() {
     for(var i = 0; i < total; i++){
@@ -87,9 +68,9 @@ function create() {
         num_arr.push(document.getElementById("num_"+String(i)).value)
         course_arr.push(document.getElementById("course_"+String(i)).value)
     }
-   console.log(final_arr.join())
-   console.log(course_arr.join())
-   console.log(num_arr.join())
+   //console.log(final_arr.join())
+   //console.log(course_arr.join())
+   //console.log(num_arr.join())
     for(var i = 0; i < total*2; i+=2){
         var day_before = final_arr[i].substring(0, 8)
         var day = final_arr[i].substring(8,10) - 1
@@ -108,8 +89,10 @@ function create() {
             }
         }
         final_arr.splice(i, 0, day_before + day)
-        console.log(final_arr.join())
+        //console.log(final_arr.join())
     }
+    console.log(final_arr.join())
+    total *= 2
    time_to_start()
    time_to_end()
    createEvent()
@@ -119,31 +102,39 @@ function create() {
    document.getElementById("downbtn").style.display = "block"
 }
 
-var time_start = []
-var time_end = []
+
 function time_to_start(){
+    console.log(final_arr.join())
     for(var t =0; t < total; t+=2){
         var str = ""
         str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "000000"
-        time_start.push()
+        time_start.push(str)
+        console.log("im in func")
     }
+    console.log(time_start.join())
 }
 
 function time_to_end(){
-    for(var t =1; t < total; t+=2){
+    console.log(final_arr.join())
+    for(var t =1; t <= total; t+=2){
         var str = ""
         str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "235959"
-        time_end.push()
+        time_end.push(str)
+        console.log("im in fund")
     }
+    console.log(time_end.join())
 }
 
 var icsFile = null;
 var event_str = ""
 function createEvent() { 
+    console.log(time_start.join())
+    console.log("time_statr", time_start.length)
+    console.log("total ", total)
     for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
-       randomString() +
+       Math.random().toString(36).substring(2) +
        "\n" + 
        "DTSTART;VALUE=DATE:" +
        time_start[i] +
@@ -159,9 +150,12 @@ function createEvent() {
        "\n" +
        "END:VEVENT\n";
     }
+    console.log("running")
+    console.log("str: ", event_str)
 }
 
 function makeIcsFile(date, summary, description) {
+    console.log("eventstr: ", event_str)
     var test =
       "BEGIN:VCALENDAR\n" +
       "CALSCALE:GREGORIAN\n" +
@@ -172,7 +166,7 @@ function makeIcsFile(date, summary, description) {
       test += event_str;
 
       test += "END:VCALENDAR";
-  
+    console.log(test)
     var data = new File([test], { type: "text/plain" });
   
     // If we are replacing a previously generated file we need to
