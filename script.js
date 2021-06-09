@@ -12,18 +12,25 @@ window.onload = function(){
         }
         str += '</tr>'
     }
-    
+    //var arr = [1,2,3,4]
+    //test.apply(this ,arr)
+    console.log(arr.join())
     table.innerHTML += str
 };
 
-
-
+var week = []
 function checking(){
-    for( i = 0; i <63; i++ ){
-        if(document.getElementById('check' + String(i)).checked == true){
-            console.log(i)
+    for(var f = 0; f < 7; f++){
+        var temp_arr = []
+        for( i = f; i <63; i+=7 ){
+            if(document.getElementById('check' + String(i)).checked == true){
+                console.log(i)
+                temp_arr.push(i)
+            }
         }
+        week.push(temp_arr)
     }
+    console.log(week)
 }
 
 var total = 1;
@@ -93,6 +100,7 @@ function create() {
     }
     console.log(final_arr.join())
     total *= 2
+    automator()
    time_to_start()
    time_to_end()
    createEvent()
@@ -102,6 +110,12 @@ function create() {
    document.getElementById("downbtn").style.display = "block"
 }
 
+function exdate_working(){
+    var temp_size = total / 2
+    for(var r = 0; r < temp_size; r ++){
+        
+    }
+}
 
 function time_to_start(){
     console.log(final_arr.join())
@@ -124,9 +138,83 @@ function time_to_end(){
     }
     console.log(time_end.join())
 }
+//var week = []
+function calNextDay(month, year, day){
+    if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 | month == 12 ){
+        if(day + 1 > 31) return 1;
+      //  else return day + 1;
+    }else if(month == 4 || month == 6 || month == 9 || month == 11){
+        if(day + 1 > 30) return 1;
+     //   else return day + 1;
+    }else{
+        if(year % 4){
+            if(day + 1 > 28) return 1;
+          //  else return day + 1;
+        } //return 28;
+        if(!(year % 4) && year % 100){
+            if(day + 1 > 29) return 1;
+          //  else return day + 1;
+        } //return 29; //leap month
+        if(year % 100 && !(year % 400)){
+            if(day + 1 > 28) return 1;
+          //  else return day + 1;
+        } //return 28
+        else{
+            if(day + 1 > 29) return 1;
+          //  else return day + 1;
+        } //return 29 //leap month
+    }
+    return day + 1
+}
+
+var scheduler = []
+//week[]
+function automator(){
+    var today = new Date()
+    var sizer = toal / 2;
+    console.log(today.getFullYear(), today.getMonth() +1, today.getDate())
+    //document.getElementById("")
+    var weekday = (today.getDay() + 1) % 7
+    for(var g = 0; g < sizer; g++){
+        
+    }
+}
+
+function translate_week(temp_week){
+    switch (temp_week){
+        case 0:
+            return "SU"
+            break;
+        case 1:
+            return "MO"
+            break;
+        case 2:
+            return "TU"
+            break;
+        case 3:
+            return "WE"
+            break;
+        case 0:
+            return "TH"
+            break;
+        case 1:
+            return "FR"
+            break;
+        case 2:
+            return "SA"
+            break;
+        default:
+            return "MO"
+            break;          
+    }
+
+}
 
 var icsFile = null;
 var event_str = ""
+var fre_week = ""
+
+
 function createEvent() { 
     console.log(time_start.join())
     console.log("time_statr", time_start.length)
@@ -136,6 +224,7 @@ function createEvent() {
        "UID:" + 
        Math.random().toString(36).substring(2) +
        "\n" + 
+       "TZID:Asia/Shanghai\n" + 
        "DTSTART;VALUE=DATE:" +
        time_start[i] +
        "\n" +
@@ -148,6 +237,11 @@ function createEvent() {
        "DESCRIPTION:" +
        "review for "+ course_arr[i] +
        "\n" +
+       "BEGIN:VALARM\n" +                                                                       
+       "TRIGGER:-PT10M\n" +
+       "ACTION:DISPLAY" +
+       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + fre_week
+       "\n" +   
        "END:VEVENT\n";
     }
     console.log("running")
