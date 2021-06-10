@@ -14,7 +14,7 @@ window.onload = function(){
     }
     //var arr = [1,2,3,4]
     //test.apply(this ,arr)
-    console.log(arr.join())
+    //console.log(arr.join())
     table.innerHTML += str
 };
 
@@ -63,11 +63,19 @@ function calLastDay(month, year){
 }
 
 
-var final_arr=[];
-var course_arr = [];
-var num_arr = []
-var time_start = []
-var time_end = []
+var final_arr=[]; // final date
+var course_arr = []; //course name
+var num_arr = [] //number of topic of final for review
+var time_start = []//start day of
+var time_end = []//
+var exclude_final = [] // exclude from review days
+var exclude_str = "" //for RRULE
+var icsFile = null;
+var event_str = ""
+var until = []
+var window_start = ""
+var window_end = ""
+var window_str = ""
 
 function create() {
     for(var i = 0; i < total; i++){
@@ -78,7 +86,8 @@ function create() {
    //console.log(final_arr.join())
    //console.log(course_arr.join())
    //console.log(num_arr.join())
-    for(var i = 0; i < total*2; i+=2){
+    total *= 2;
+    for(var i = 0; i < total; i+=2){
         var day_before = final_arr[i].substring(0, 8)
         var day = final_arr[i].substring(8,10) - 1
         if(parseInt(final_arr[i].substring(8,10)) == 1){
@@ -98,46 +107,110 @@ function create() {
         final_arr.splice(i, 0, day_before + day)
         //console.log(final_arr.join())
     }
+    //total /= 2
     console.log(final_arr.join())
-    total *= 2
+    //total *= 2
+    final_rearrange()
+    ret_window()
+    review_windows()
     automator()
-   time_to_start()
-   time_to_end()
    createEvent()
    //makeIcsFile()
    var ready = document.getElementById("downbtn")
    ready.href = makeIcsFile()
    document.getElementById("downbtn").style.display = "block"
 }
-
+/*
 function exdate_working(){
     var temp_size = total / 2
-    for(var r = 0; r < temp_size; r ++){
-        
-    }
-}
-
-function time_to_start(){
-    console.log(final_arr.join())
     for(var t =0; t < total; t+=2){
         var str = ""
         str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "000000"
         time_start.push(str)
         console.log("im in func")
     }
-    console.log(time_start.join())
+}
+ */
+/*
+function time_to_start(){
+   // console.log(final_arr.join())
+    for(var t =0; t < total; t+=2){
+        var str = ""
+        str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "000000"
+        time_start.push(str)
+        console.log("im in func")
+    }
+    //console.log(time_start.join())
 }
 
 function time_to_end(){
-    console.log(final_arr.join())
+    //console.log(final_arr.join())
     for(var t =1; t <= total; t+=2){
         var str = ""
         str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "235959"
         time_end.push(str)
         console.log("im in fund")
     }
-    console.log(time_end.join())
 }
+ */
+
+/*
+
+ */
+function final_rearrange(){
+    for(var t =0; t < total ; t++){
+        var temp_str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "000000"
+        if(t % 2){
+            final_formatted.push(temp_str)
+        }
+        exclude_str += temp_str
+        exclude_str +=    ','
+    }
+    console.log(str)
+    console.log(final_formatted.join())
+}
+
+function ret_window(num){
+    if(num / 7 == 0){
+        window_start = "060000"
+        window_end = "080000"
+    }else if(num / 7 == 1){
+        window_start = "080000"
+        window_end = "100000"
+    }else if(num / 7 == 2){
+        window_start = "100000"
+        window_end = "120000"
+    }else if(num / 7 == 3){
+        window_start = "120000"
+        window_end = "140000"
+    }else if(num / 7 == 4){
+        window_start = "140000"
+        window_end = "160000"
+    }else if(num / 7 == 5){
+        window_start = "160000"
+        window_end = "180000"
+    }else if(num / 7 == 6){
+        window_start = "180000"
+        window_end = "200000"
+    }else if(num / 7 == 7){
+        window_start = "200000"
+        window_end = "220000"
+    }else if(num / 7 == 8){
+        window_start = "220000"
+        window_end = "240000"
+    }
+}
+
+function review_windows(){
+    var today = new Date()
+    for(var d = 0; d < total; d++){
+        //window_str =
+        time_start.push(String(today.getFullYear()) + String(today.getMonth()+1) + String(today.getDate()) + "T" + window_start)
+        time_end.push(String(today.getFullYear()) + String(today.getMonth()+1) + String(today.getDate()) + "T" + window_end)
+    }
+}
+
+
 //var week = []
 function calNextDay(month, year, day){
     if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 | month == 12 ){
@@ -167,16 +240,18 @@ function calNextDay(month, year, day){
     return day + 1
 }
 
-var scheduler = []
-//week[]
+
+
 function automator(){
     var today = new Date()
     var sizer = toal / 2;
+    var temp_event
     console.log(today.getFullYear(), today.getMonth() +1, today.getDate())
     //document.getElementById("")
-    var weekday = (today.getDay() + 1) % 7
+    time_start = String(today.getFullYear()) + String(today.getMonth()+1) + String(today.getDate()) + 'T000000'
+    var weekday = translate_week((today.getDay() + 1) % 7 )
     for(var g = 0; g < sizer; g++){
-        
+        event_str += createEvent(course_arr[g], time_start[g], time_end[g] ,  until[g], translate_week(today.getDay()%7) )
     }
 }
 
@@ -210,15 +285,10 @@ function translate_week(temp_week){
 
 }
 
-var icsFile = null;
-var event_str = ""
-var fre_week = ""
 
 
-function createEvent() { 
-    console.log(time_start.join())
-    console.log("time_statr", time_start.length)
-    console.log("total ", total)
+
+function createEvent(event_name, start_time, end_time, get_until, r_week) {
     for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
@@ -226,13 +296,13 @@ function createEvent() {
        "\n" + 
        "TZID:Asia/Shanghai\n" + 
        "DTSTART;VALUE=DATE:" +
-       time_start[i] +
+       //time_start[i] +
        "\n" +
        "DTEND;VALUE=DATE:" +
-       time_end[i] +
+      // time_end[i] +
        "\n" +
        "SUMMARY:" +
-       course_arr[i] +
+      // course_arr[i] +
        "\n" +
        "DESCRIPTION:" +
        "review for "+ course_arr[i] +
@@ -240,15 +310,15 @@ function createEvent() {
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
        "ACTION:DISPLAY" +
-       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + fre_week
+       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + "EXDATE="+ exclude_str +
        "\n" +   
        "END:VEVENT\n";
     }
-    console.log("running")
-    console.log("str: ", event_str)
+    return event_str
 }
 
 function makeIcsFile(date, summary, description) {
+    //event_str =
     console.log("eventstr: ", event_str)
     var test =
       "BEGIN:VCALENDAR\n" +
