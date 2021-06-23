@@ -25,7 +25,7 @@ function checking(){
         for( i = f; i <63; i+=7 ){
             if(document.getElementById('check' + String(i)).checked == true){
                 console.log(i)
-                temp_arr.push(i % 7)
+                temp_arr.push(i)
             }
         }
         week.push(temp_arr)
@@ -36,7 +36,6 @@ function checking(){
 
 var total = 1;
 //test 
-/*
 week.push([0])
 week.push([5,8])
 week.push([])
@@ -44,7 +43,7 @@ week.push([])
 week.push([])
 week.push([])
 week.push([])
-*/
+
 
 function add_course(){
     add = document.getElementById("course");
@@ -208,10 +207,7 @@ function create() {
    var toady = new Date();
    year = today.getFullYear()
    month = today.getMonth() + 1
-   day = today.getDate()
-   year_str = year.toString()
-   month_str = month > 9? month.toString(): "0"+month.toString()
-   day_str = day > 9? day.toString(): "0"+day.toString()
+   day 
     for(var i = 0; i < total; i++){
         console.log(final_arr[i].substring(0, 4))
         console.log(final_arr[i].substring(5, 7))
@@ -219,15 +215,14 @@ function create() {
         console.log(cal_day((final_arr[i].substring(0, 4)),(final_arr[i].substring(5, 7)), (String(final_arr[i].substring(8)))))
         before_final.push(cal_day(final_arr[i].substring(8), final_arr[i].substring(5, 7), final_arr[i].substring(0, 4)))
         final_arr[i] = final_arr[i].substring(0, 4).toString() + final_arr[i].substring(5, 7).toString() + final_arr[i].substring(8).toString()
-        start_day.push(cal_next_day(day_str, month_str, year_str))
+        start_day.push(cal_next_day(final_arr[i].substring(8), final_arr[i].substring(5, 7), final_arr[i].substring(0, 4)))
     }
     //total /= 2
     console.log(final_arr.join())
     console.log(before_final.join())
-    //start writing ics file
-    for(var i = 0; i < total; i++){
-        
-    }
+    //total *= 2
+    
+    //final_rearrange()
     ret_window()
     review_windows()
     automator()
@@ -320,7 +315,7 @@ function ret_window(num){
         window_end = "240000"
     }
 }
-/*
+
 function review_windows(){
     var today = new Date()
     for(var d = 0; d < total; d++){
@@ -329,7 +324,6 @@ function review_windows(){
         time_end.push(String(today.getFullYear()) + String(today.getMonth()+1) + String(today.getDate()) + "T" + window_end)
     }
 }
-*/
 
 /*
 the final day and the days before final is reserved

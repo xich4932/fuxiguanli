@@ -25,7 +25,7 @@ function checking(){
         for( i = f; i <63; i+=7 ){
             if(document.getElementById('check' + String(i)).checked == true){
                 console.log(i)
-                temp_arr.push(i % 7)
+                temp_arr.push(i)
             }
         }
         week.push(temp_arr)

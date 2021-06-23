@@ -25,7 +25,7 @@ function checking(){
         for( i = f; i <63; i+=7 ){
             if(document.getElementById('check' + String(i)).checked == true){
                 console.log(i)
-                temp_arr.push(i % 7)
+                temp_arr.push(i)
             }
         }
         week.push(temp_arr)
@@ -36,7 +36,6 @@ function checking(){
 
 var total = 1;
 //test 
-/*
 week.push([0])
 week.push([5,8])
 week.push([])
@@ -44,7 +43,7 @@ week.push([])
 week.push([])
 week.push([])
 week.push([])
-*/
+
 
 function add_course(){
     add = document.getElementById("course");
