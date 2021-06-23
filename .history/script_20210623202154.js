@@ -112,6 +112,7 @@ cal_day(1,10,2021)
 */
 
 function cal_next_day(day, month, year){
+    
     if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){ // month end in 30 days
         if(month == 12 && day == 31){//next day is new year
             return (year+1).toString() + "0101"

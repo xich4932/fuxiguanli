@@ -8,12 +8,11 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript" src="script.js" defer="true"></script>
     
     <link rel="stylesheet" href="style.css">
     <title>Hello, world!</title>
   </head>
-  <body>
+  <body onload="load_table()">
     
     <!-- Optional JavaScript; choose one of the two! -->
 
@@ -25,6 +24,27 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
     -->
+
+    <div id="print_table" class="table_style">
+      <table class="table" id = "this_table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Sun</th>
+            <th scope="col">Mon</th>
+            <th scope="col">Tue</th>
+            <th scope="col">Wed</th>
+            <th scope="col">Thur</th>
+            <th scope="col">Fri</th>
+            <th scope="col">Sat</th>
+          </tr>
+        </thead>
+        <tbody id="table_body">
+
+        </tbody>
+        </table>
+    </div>
+
     <div>
       <div id="course_table" >
         <table class="table" id = "add_course_table">
@@ -56,35 +76,29 @@
     </div>
     </div>
     <!--
-      <div ">
-      <button type="button" class="btn btn-primary" id="addbtn" onclick="printing()">check</button>
+    <div>
+      <div >
+        <a class="btn btn-primary" href="class_main.html" role="button" >Next</a>
+      </div>
+    </div>
+
+    <div class="position-absolute bottom-7 start-50 translate-middle-x">
+      <button type="button" class="btn btn-primary" onclick="checking()">Submit</button>
     </div>
     -->
-      <div>
-        
-        <div class="position-absolute bottom- start-50 translate-middle-x">
-            <button type="button" class="btn btn-primary" id="addbtn" onclick="add_course()">Add new course</button>
-           
-        </div>
-        <!--
-        <div>
-          <div class="position-absolute bottom-0 end-0">
-            <a class="btn btn-primary" href="download.html" role="button">Next</a>
-          </div>
-          <div class="position-absolute bottom-0 start-0">
-            <a class="btn btn-primary" href="index_main.html" role="button">Prev</a>
-          </div>
-          
-        </div>
-        -->
-        <div class="position-absolute bottom-0 start-50 translate-middle-x">
+    <div class="position-absolute bottom- start-50 translate-middle-x">
+      <button type="button" class="btn btn-primary" id="addbtn" onclick="add_course()">Add new course</button>
 
-          <button type="button" class="btn btn-primary" id="crtbtn" onclick="create()">create</button>
-          <!--
-          <a class="download hide" id="downloadLink" download="event.ics">Download</a>
-          -->
-          <a class="btn btn-primary" style="visibility: hidden;" href="#" role="button" id="downbtn" download="event.ics" >download</a>
-         </div>
     </div>
+    <div class="position-absolute bottom-0 start-50 translate-middle-x">
+
+      <button type="button" class="btn btn-primary" id="crtbtn" onclick="create()">create</button>
+      <!--
+      <a class="download hide" id="downloadLink" download="event.ics">⇩ Download</a>
+      -->
+      <a class="btn btn-primary" style="display: none;" href="#" role="button" id="downbtn" download="event.ics" >download</a>
+     </div>
+   
+     <script type="text/javascript" src="script.js" defer="true"></script>
   </body>
 </html>

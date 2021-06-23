@@ -112,6 +112,7 @@ cal_day(1,10,2021)
 */
 
 function cal_next_day(day, month, year){
+    
     if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){ // month end in 30 days
         if(month == 12 && day == 31){//next day is new year
             return (year+1).toString() + "0101"
@@ -123,13 +124,12 @@ function cal_next_day(day, month, year){
                 day = (day + 1).toString()
             }
         }else{
+            if(month + 1 < 10){
+                month = "0" + (month + 1).toString()
+            }else{
+                month = (month + 1).toString()
+            }
             day = "01"
-            month +=1
-        }
-        if(month < 10){
-            month = "0" + month.toString()
-        }else{
-            month = month.toString()
         }
     }
     else if(month == 2){
@@ -161,13 +161,12 @@ function cal_next_day(day, month, year){
                 day = (day + 1).toString()
             }
         }else{
-            month += 1
+            if(month + 1 < 10){
+                month = "0" + (month + 1).toString()
+            }else{
+                month = (month + 1).toString()
+            }
             day = "01"
-        }
-        if(month  < 10){
-            month = "0" + month.toString()
-        }else{
-            month = month.toString()
         }
         
     }

@@ -71,16 +71,11 @@ function cal_day(day, month, year){
             //return String(year)+String(month)+String(day)
             return year.toString() + month.toString()  + day.toString()
         }
-    }else if(!(month == 1 && day == 1)){
+    }else if(month != 1 && day != 1){
         //month - 1 which is end with 31 
         if(month == 1 || month == 2 || month == 4 || month == 6 || month == 8 || month == 9 || month == 11){
             month = (month - 1)%12
-            if(month < 10){
-                return String(year) + '0' + String(month) + "31"
-            }else{
-                return String(year) + String(month) + "31"
-            }
-            
+            return String(year) + String(month) + "31"
         }else if(month == 3){//month - 1 is Feb, we need to check whether is leap year
             month = 2;
             if(((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)){
@@ -92,11 +87,7 @@ function cal_day(day, month, year){
         }else{
             //month - 1 which is end with 30
             month = (month - 1)%12
-            if(month < 10){
-                return String(year) + '0' + String(month) + "30"
-            }else{
-                return String(year) + String(month) + "30"
-            }
+            return String(year) + String(month) + "30"
         }
     }else{
         //when is the first day of year, year - 1
@@ -110,70 +101,6 @@ cal_day(1,3,2020)
 cal_day(1,3,2021)
 cal_day(1,10,2021)
 */
-
-function cal_next_day(day, month, year){
-    if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){ // month end in 30 days
-        if(month == 12 && day == 31){//next day is new year
-            return (year+1).toString() + "0101"
-        }
-        if(day + 1 <= 31){
-            if(day + 1 < 10){
-                day = "0" + (day + 1).toString()
-            }else{
-                day = (day + 1).toString()
-            }
-        }else{
-            day = "01"
-            month +=1
-        }
-        if(month < 10){
-            month = "0" + month.toString()
-        }else{
-            month = month.toString()
-        }
-    }
-    else if(month == 2){
-        var max_day = 0;
-        month = "03"
-        if(((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)){
-            //day = 29
-            max_day = 29
-        }else{
-            max_day = 28
-        }
-        if(day + 1 > max_day){
-            
-            day = "01"
-        }else{
-            day = (day + 1).toString()
-            if(day < 9){
-                day = "0" + (day + 1).toString()
-            }else{
-                day = (day + 1).toString()
-            }
-        }
-    }else{
-        //month end in 30 days
-        if(day + 1 <= 30){
-            if(day + 1 < 10){
-                day = "0" + (day + 1).toString()
-            }else{
-                day = (day + 1).toString()
-            }
-        }else{
-            month += 1
-            day = "01"
-        }
-        if(month  < 10){
-            month = "0" + month.toString()
-        }else{
-            month = month.toString()
-        }
-        
-    }
-    return String(year)+String(month)+String(day)
-}
-
 
 
 
@@ -209,20 +136,17 @@ function create() {
         console.log(final_arr[i].substring(5, 7))
         console.log(final_arr[i].substring(8))
         console.log(cal_day((final_arr[i].substring(0, 4)),(final_arr[i].substring(5, 7)), (String(final_arr[i].substring(8)))))
-        before_final.push(cal_day(final_arr[i].substring(8), final_arr[i].substring(5, 7), final_arr[i].substring(0, 4)))
-        final_arr[i] = final_arr[i].substring(0, 4).toString() + final_arr[i].substring(5, 7).toString() + final_arr[i].substring(8).toString()
-        
+        final_arr.push(cal_day())
     }
     //total /= 2
     console.log(final_arr.join())
     console.log(before_final.join())
     //total *= 2
-    
-    //final_rearrange()
+    final_rearrange()
     ret_window()
     review_windows()
     automator()
-   var final_ics = createEvent_final()
+   createEvent()
    //makeIcsFile()
    var ready = document.getElementById("downbtn")
    ready.href = makeIcsFile()
@@ -403,8 +327,7 @@ function translate_week(temp_week){
 
 //writing ICS rule
 
-function createEvent_review(event_name, start_time, end_time, get_until, r_week) {
-    var event_str = ""
+function createEvent(event_name, start_time, end_time, get_until, r_week) {
     for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
@@ -426,46 +349,12 @@ function createEvent_review(event_name, start_time, end_time, get_until, r_week)
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
        "ACTION:DISPLAY" +
-       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
+       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + "EXDATE="+ exclude_str +
        "\n" +   
        "END:VEVENT\n";
     }
     return event_str
 }
-
-var final_str = ""
-function createEvent_final() {
-    for(var i = 0; i < total; i++){
-       event_str += "BEGIN:VEVENT\n" +
-       "UID:" + 
-       Math.random().toString(36).substring(2) +
-       "\n" + 
-       "TZID:Asia/Shanghai\n" + 
-       "DTSTART;VALUE=DATE:" +
-       //time_start[i] +
-       final_arr[i] + "T000000"
-       "\n" +
-       "DTEND;VALUE=DATE:" +
-       final_arr[i] + "T235959"
-      // time_end[i] +
-       "\n" +
-       "SUMMARY:" +
-       "final for "+ course_arr[i] +
-       "\n" +
-       "DESCRIPTION:" +
-       "final for "+ course_arr[i] +
-       "\n" +
-       "BEGIN:VALARM\n" +                                                                       
-       "TRIGGER:-PT10M\n" +
-       "ACTION:DISPLAY" +
-       //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + "EXDATE="+ exclude_str +
-       "\n" +   
-       "END:VEVENT\n";
-    }
-    return final_str
-}
-
-
 
 function makeIcsFile(date, summary, description) {
     //event_str =

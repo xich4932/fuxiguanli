@@ -31,19 +31,9 @@ function checking(){
         week.push(temp_arr)
     }
     console.log(week)
-    document.getElementById("table_next").style.visibility = "visible"
 }
 
 var total = 1;
-//test 
-week.push([0])
-week.push([5,8])
-week.push([])
-week.push([])
-week.push([])
-week.push([])
-week.push([])
-
 
 function add_course(){
     add = document.getElementById("course");
@@ -59,126 +49,21 @@ function printing(){
 
 }
 
-
-//the day before final is reserved, thus function need to find the actual day of before_fianl
-function cal_day(day, month, year){
-    if(day != 1){
-        day -= 1
-        if(day < 10){
-            //return String(year)+String(month)+'0'+String(day)
-            return year.toString() + month.toString() + '0' + day.toString()
-        }else{
-            //return String(year)+String(month)+String(day)
-            return year.toString() + month.toString()  + day.toString()
-        }
-    }else if(!(month == 1 && day == 1)){
-        //month - 1 which is end with 31 
-        if(month == 1 || month == 2 || month == 4 || month == 6 || month == 8 || month == 9 || month == 11){
-            month = (month - 1)%12
-            if(month < 10){
-                return String(year) + '0' + String(month) + "31"
-            }else{
-                return String(year) + String(month) + "31"
-            }
-            
-        }else if(month == 3){//month - 1 is Feb, we need to check whether is leap year
-            month = 2;
-            if(((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)){
-                day = 29
-            }else{
-                day = 28
-            }
-            return String(year) + String(month) + String(day)
-        }else{
-            //month - 1 which is end with 30
-            month = (month - 1)%12
-            if(month < 10){
-                return String(year) + '0' + String(month) + "30"
-            }else{
-                return String(year) + String(month) + "30"
-            }
-        }
+function calLastDay(month, year){
+    if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 | month == 12 ){
+        return 31;
+    }else if(month == 4 || month == 6 || month == 9 || month == 11){
+        return 30;
     }else{
-        //when is the first day of year, year - 1
-        year -= 1
-        return String(year) + "1231"
+        if(year % 4) return 28;
+        if(!(year % 4) && year % 100) return 29;
+        if(year % 100 && !(year % 400)) return 28
+        else return 29
     }
-}
-/*
-cal_day(21,2,1999)
-cal_day(1,3,2020)
-cal_day(1,3,2021)
-cal_day(1,10,2021)
-*/
-
-function cal_next_day(day, month, year){
-    if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){ // month end in 30 days
-        if(month == 12 && day == 31){//next day is new year
-            return (year+1).toString() + "0101"
-        }
-        if(day + 1 <= 31){
-            if(day + 1 < 10){
-                day = "0" + (day + 1).toString()
-            }else{
-                day = (day + 1).toString()
-            }
-        }else{
-            day = "01"
-            month +=1
-        }
-        if(month < 10){
-            month = "0" + month.toString()
-        }else{
-            month = month.toString()
-        }
-    }
-    else if(month == 2){
-        var max_day = 0;
-        month = "03"
-        if(((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)){
-            //day = 29
-            max_day = 29
-        }else{
-            max_day = 28
-        }
-        if(day + 1 > max_day){
-            
-            day = "01"
-        }else{
-            day = (day + 1).toString()
-            if(day < 9){
-                day = "0" + (day + 1).toString()
-            }else{
-                day = (day + 1).toString()
-            }
-        }
-    }else{
-        //month end in 30 days
-        if(day + 1 <= 30){
-            if(day + 1 < 10){
-                day = "0" + (day + 1).toString()
-            }else{
-                day = (day + 1).toString()
-            }
-        }else{
-            month += 1
-            day = "01"
-        }
-        if(month  < 10){
-            month = "0" + month.toString()
-        }else{
-            month = month.toString()
-        }
-        
-    }
-    return String(year)+String(month)+String(day)
 }
 
 
-
-
-var final_arr=[]; // final dates
-var before_final = [] //the days before final
+var final_arr=[]; // final date
 var course_arr = []; //course name
 var num_arr = [] //number of topic of final for review
 var time_start = []//start day of
@@ -192,41 +77,48 @@ var window_start = ""
 var window_end = ""
 var window_str = ""
 
-//var final = []
-
 function create() {
     for(var i = 0; i < total; i++){
         final_arr.push(document.getElementById("final_"+String(i)).value)
         num_arr.push(document.getElementById("num_"+String(i)).value)
         course_arr.push(document.getElementById("course_"+String(i)).value)
     }
-   console.log(final_arr.join())
-   console.log(course_arr.join())
-   console.log(num_arr.join())
-   //total = 2;
-    for(var i = 0; i < total; i++){
-        console.log(final_arr[i].substring(0, 4))
-        console.log(final_arr[i].substring(5, 7))
-        console.log(final_arr[i].substring(8))
-        console.log(cal_day((final_arr[i].substring(0, 4)),(final_arr[i].substring(5, 7)), (String(final_arr[i].substring(8)))))
-        before_final.push(cal_day(final_arr[i].substring(8), final_arr[i].substring(5, 7), final_arr[i].substring(0, 4)))
-        final_arr[i] = final_arr[i].substring(0, 4).toString() + final_arr[i].substring(5, 7).toString() + final_arr[i].substring(8).toString()
-        
+   //console.log(final_arr.join())
+   //console.log(course_arr.join())
+   //console.log(num_arr.join())
+    total *= 2;
+    for(var i = 0; i < total; i+=2){
+        var day_before = final_arr[i].substring(0, 8)
+        var day = final_arr[i].substring(8,10) - 1
+        if(parseInt(final_arr[i].substring(8,10)) == 1){
+            var temp_day_before = day_before
+            var day_before = final_arr[i].substring(5,7) - 1
+            day = calLastDay(parseInt(final_arr[i].substring(5,7))-1 ,parseInt(final_arr[i].substring(0,4)))
+            if(day_before < 10){
+                day_before = temp_day_before.substring(0, 5) + '0' + String(day_before) + '-'
+            }  
+        }else{
+            if(day < 10){
+                day = '0' + String(day)
+            }else{
+                day = final_arr[i].substring(8,10) - 1
+            }
+        }
+        final_arr.splice(i, 0, day_before + day)
+        //console.log(final_arr.join())
     }
     //total /= 2
     console.log(final_arr.join())
-    console.log(before_final.join())
     //total *= 2
-    
-    //final_rearrange()
+    final_rearrange()
     ret_window()
     review_windows()
     automator()
-   var final_ics = createEvent_final()
+   createEvent()
    //makeIcsFile()
    var ready = document.getElementById("downbtn")
    ready.href = makeIcsFile()
-   document.getElementById("downbtn").style.visibility = "visible"
+   document.getElementById("downbtn").style.display = "block"
 }
 /*
 function exdate_working(){
@@ -357,7 +249,7 @@ function calNextDay(month, year, day){
 
 function automator(){
     var today = new Date()
-    var sizer = total / 2;
+    var sizer = toal / 2;
     var temp_event
     console.log(today.getFullYear(), today.getMonth() +1, today.getDate())
     //document.getElementById("")
@@ -403,8 +295,7 @@ function translate_week(temp_week){
 
 //writing ICS rule
 
-function createEvent_review(event_name, start_time, end_time, get_until, r_week) {
-    var event_str = ""
+function createEvent(event_name, start_time, end_time, get_until, r_week) {
     for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
@@ -426,61 +317,27 @@ function createEvent_review(event_name, start_time, end_time, get_until, r_week)
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
        "ACTION:DISPLAY" +
-       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
+       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + "EXDATE="+ exclude_str +
        "\n" +   
        "END:VEVENT\n";
     }
     return event_str
 }
 
-var final_str = ""
-function createEvent_final() {
-    for(var i = 0; i < total; i++){
-       event_str += "BEGIN:VEVENT\n" +
-       "UID:" + 
-       Math.random().toString(36).substring(2) +
-       "\n" + 
-       "TZID:Asia/Shanghai\n" + 
-       "DTSTART;VALUE=DATE:" +
-       //time_start[i] +
-       final_arr[i] + "T000000"
-       "\n" +
-       "DTEND;VALUE=DATE:" +
-       final_arr[i] + "T235959"
-      // time_end[i] +
-       "\n" +
-       "SUMMARY:" +
-       "final for "+ course_arr[i] +
-       "\n" +
-       "DESCRIPTION:" +
-       "final for "+ course_arr[i] +
-       "\n" +
-       "BEGIN:VALARM\n" +                                                                       
-       "TRIGGER:-PT10M\n" +
-       "ACTION:DISPLAY" +
-       //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + "EXDATE="+ exclude_str +
-       "\n" +   
-       "END:VEVENT\n";
-    }
-    return final_str
-}
-
-
-
 function makeIcsFile(date, summary, description) {
     //event_str =
-    //console.log("eventstr: ", event_str)
+    console.log("eventstr: ", event_str)
     var test =
       "BEGIN:VCALENDAR\n" +
       "CALSCALE:GREGORIAN\n" +
       "METHOD:PUBLISH\n" +
       "PRODID:-//Test Cal//EN\n" +
       "VERSION:2.0\n";
-     // console.log(event_str)
+      console.log(event_str)
       test += event_str;
 
       test += "END:VCALENDAR";
-    ///console.log(test)
+    console.log(test)
     var data = new File([test], { type: "text/plain" });
   
     // If we are replacing a previously generated file we need to
