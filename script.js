@@ -25,7 +25,7 @@ function checking(){
         for( i = f; i <63; i+=7 ){
             if(document.getElementById('check' + String(i)).checked == true){
                 console.log(i)
-                temp_arr.push(i % 7)
+                temp_arr.push(parseInt(i / 7))
             }
         }
         week.push(temp_arr)
@@ -38,13 +38,14 @@ var total = 1;
 //test 
 /*
 week.push([0])
-week.push([5,8])
-week.push([])
-week.push([])
-week.push([])
+week.push([1,2])
+week.push([2,3])
+week.push([4])
+week.push([5])
 week.push([])
 week.push([])
 */
+var giant_table = []
 
 function add_course(){
     add = document.getElementById("course");
@@ -192,7 +193,8 @@ var until = []
 var window_start = ""
 var window_end = ""
 var window_str = ""
-
+var special_id = []
+var count_fail = 0
 //var final = []
 
 function create() {
@@ -212,6 +214,7 @@ function create() {
    year_str = year.toString()
    month_str = month > 9? month.toString(): "0"+month.toString()
    day_str = day > 9? day.toString(): "0"+day.toString()
+    start_day = cal_next_day(day_str, month_str, year_str)
     for(var i = 0; i < total; i++){
         console.log(final_arr[i].substring(0, 4))
         console.log(final_arr[i].substring(5, 7))
@@ -219,14 +222,18 @@ function create() {
         console.log(cal_day((final_arr[i].substring(0, 4)),(final_arr[i].substring(5, 7)), (String(final_arr[i].substring(8)))))
         before_final.push(cal_day(final_arr[i].substring(8), final_arr[i].substring(5, 7), final_arr[i].substring(0, 4)))
         final_arr[i] = final_arr[i].substring(0, 4).toString() + final_arr[i].substring(5, 7).toString() + final_arr[i].substring(8).toString()
-        start_day.push(cal_next_day(day_str, month_str, year_str))
+
+        special_id.push(Math.random().toString(36).substring(2))
     }
     //total /= 2
     console.log(final_arr.join())
     console.log(before_final.join())
     //start writing ics file
-    for(var i = 0; i < total; i++){
-        
+    day = today.getDay()
+    day = (day + 1) % 7
+    var idx = day;
+    while(count_fail < total){
+        createEvent_review(special_id[idx], course_arr[idx], start_day, idx)
     }
     ret_window()
     review_windows()
@@ -294,28 +301,28 @@ function ret_window(num){
     if(num / 7 == 0){
         window_start = "060000"
         window_end = "080000"
-    }else if(num / 7 == 1){
+    }else if(num == 1){
         window_start = "080000"
         window_end = "100000"
-    }else if(num / 7 == 2){
+    }else if(num == 2){
         window_start = "100000"
         window_end = "120000"
-    }else if(num / 7 == 3){
+    }else if(num == 3){
         window_start = "120000"
         window_end = "140000"
-    }else if(num / 7 == 4){
+    }else if(num == 4){
         window_start = "140000"
         window_end = "160000"
-    }else if(num / 7 == 5){
+    }else if(num == 5){
         window_start = "160000"
         window_end = "180000"
-    }else if(num / 7 == 6){
+    }else if(num == 6){
         window_start = "180000"
         window_end = "200000"
-    }else if(num / 7 == 7){
+    }else if(num == 7){
         window_start = "200000"
         window_end = "220000"
-    }else if(num / 7 == 8){
+    }else if(num == 8){
         window_start = "220000"
         window_end = "240000"
     }
@@ -413,12 +420,12 @@ function translate_week(temp_week){
 
 //writing ICS rule
 
-function createEvent_review(event_name, start_time, end_time, get_until, r_week) {
+function createEvent_review(id, event_name, start_time, end_time, window) {
     var event_str = ""
     for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
-       Math.random().toString(36).substring(2) +
+       id +
        "\n" + 
        "TZID:Asia/Shanghai\n" + 
        "DTSTART;VALUE=DATE:" +
@@ -436,8 +443,8 @@ function createEvent_review(event_name, start_time, end_time, get_until, r_week)
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
        "ACTION:DISPLAY" +
-       "RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
-       "\n" +   
+       //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
+       //"\n" +
        "END:VEVENT\n";
     }
     return event_str
