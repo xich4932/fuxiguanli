@@ -175,7 +175,7 @@ function cal_next_day(day, month, year){
         }
         
     }
-    return String(year)+String(month)+String(day)
+    return year + month + day
 }
 
 /*
@@ -244,6 +244,7 @@ function check_break(){
     for(var d =0; d < num_arr.length; d++){
         if(num_arr[d]) count_remain++
     }
+    console.log(count_remain)
     if(count_remain == total) return true
     if(count_fail + count_remain < total) return true
     return false
@@ -270,85 +271,6 @@ var reserve_day = [] //record timewindow that has been used
 //var final = []
 var store_all = []
 
-function create() {
-    for(var i = 0; i < total; i++){
-        final_arr.push(document.getElementById("final_"+String(i)).value)
-        num_arr.push(document.getElementById("num_"+String(i)).value)
-        course_arr.push(document.getElementById("course_"+String(i)).value)
-    }
-   console.log(final_arr.join())
-   console.log(course_arr.join())
-   console.log(num_arr.join())
-    console.log("week: ", week)
-    //handle week array
-    week_handle()
-
-   //total = 2;
-   var today = new Date();
-   year = today.getFullYear()
-   month = today.getMonth() + 1
-   day = today.getDate()
-   year_str = year.toString()
-   month_str = month > 9? month.toString(): "0"+month.toString()
-   day_str = day > 9? day.toString(): "0"+day.toString()
-    start_day = cal_next_day(day_str, month_str, year_str)
-    for(var i = 0; i < total; i++){
-        console.log(final_arr[i].substring(0, 4))
-        console.log(final_arr[i].substring(5, 7))
-        console.log(final_arr[i].substring(8))
-        console.log(cal_day((final_arr[i].substring(0, 4)),(final_arr[i].substring(5, 7)), (String(final_arr[i].substring(8)))))
-        before_final.push(cal_day(final_arr[i].substring(8), final_arr[i].substring(5, 7), final_arr[i].substring(0, 4)))
-        final_arr[i] = final_arr[i].substring(0, 4).toString() + final_arr[i].substring(5, 7).toString() + final_arr[i].substring(8).toString()
-        special_id.push(Math.random().toString(36).substring(2))
-    }
-    //total /= 2
-    console.log(final_arr.join())
-    console.log(before_final.join())
-    //start writing ics file
-    //20210314
-    day = today.getDay()
-    day = (day + 1) % 7
-    var idx = day;
-    var starter = year.toString() +  month.toString() +  day.toString()
-    var  temp_start = starter
-    var round_add = 0;
-    while(check_break()){
-        temp_start  = starter
-        while(temp_start != before_final[idx]){
-            for(var ss = 0; ss < week[idx].length; ss++){
-                var start_str = week[idx][ss].substring(0, 7)
-                var end_str = week[idx][ss].substring(7)
-                if(!check_reserved(temp_start.toString() + start_str.toString())){
-                    var to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
-                    reserve_day.push(temp_start.toString() + start_str.toString())
-                    store_all.push(to_store)
-                    num_arr[idx] --
-                    round_add ++
-                }
-                temp_start = cal_next_day(temp_start.substring(6), temp_start.substring(4 ,6), temp_start.substring(0,4))
-            }
-            
-        }
-        idx ++;
-        if(idx = total) idx = 0
-        if(!num_arr[idx]) idx ++
-        if(round_add > 0){
-            round_add = 0
-        } else{
-            count_fail ++
-        }
-        console.log("!!!!!")
-    }
-    //ret_window()
-    //review_windows()
-    automator()
-   var final_ics = createEvent_final()
-   //makeIcsFile()
-   var ready = document.getElementById("downbtn")
-   ready.href = makeIcsFile()
-   console.log("finallay")
-   document.getElementById("downbtn").style.visibility = "visible"
-}
 
 
 /*
@@ -450,7 +372,7 @@ function automator(){
     for(var d =0; d < store_all.length; d++){
         big_str += store_all[d]
     }
-    big_str += final_str
+    return big_str += final_str
 }
 
 
@@ -497,16 +419,15 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
        "\n" + 
        "TZID:Asia/Shanghai\n" + 
        "DTSTART;VALUE=DATE:" +
-       start_time.toString() + "T" + start_time.toString()
+       start_day.toString() + "T" + start_time.toString() +
        "\n" +
        "DTEND;VALUE=DATE:" +
-       start_time.toString() + "T" + end_time.toString()
+       start_day.toString() + "T" + end_time.toString() +
        "\n" +
        "SUMMARY:" +
-        "review for " + event_name
+        "review for " + event_name +
        "\n" +
-       "DESCRIPTION:" +
-       "review for "+ event_name +
+       "DESCRIPTION:" + "review for "+ event_name +
        "\n" +
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
@@ -528,10 +449,9 @@ function createEvent_final() {
        "TZID:Asia/Shanghai\n" + 
        "DTSTART;VALUE=DATE:" +
        //time_start[i] +
-       final_arr[i] + "T000000"
+       final_arr[i] + "T000000" +
        "\n" +
-       "DTEND;VALUE=DATE:" +
-       final_arr[i] + "T235959"
+       "DTEND;VALUE=DATE:" + final_arr[i] + "T235959" +
       // time_end[i] +
        "\n" +
        "SUMMARY:" +
@@ -578,6 +498,103 @@ function makeIcsFile(date, summary, description) {
   
     return icsFile;
 }
+
+function create() {
+    for(var i = 0; i < total; i++){
+        final_arr.push(document.getElementById("final_"+String(i)).value)
+        num_arr.push(document.getElementById("num_"+String(i)).value)
+        course_arr.push(document.getElementById("course_"+String(i)).value)
+    }
+    console.log(final_arr.join())
+    console.log(course_arr.join())
+    console.log(num_arr.join())
+    console.log("week: ", week)
+    //handle week array
+    week_handle()
+
+    //total = 2;
+    var today = new Date();
+    year = today.getFullYear()
+    month = today.getMonth() + 1
+    day = today.getDate()
+    year_str = year.toString()
+    month_str = month > 9? month.toString(): "0"+month.toString()
+    day_str = day > 9? day.toString(): "0"+day.toString()
+    start_day = cal_next_day(day_str, month_str, year_str)
+    for(var i = 0; i < total; i++){
+        console.log(final_arr[i].substring(0, 4))
+        console.log(final_arr[i].substring(5, 7))
+        console.log(final_arr[i].substring(8))
+        console.log(cal_day((final_arr[i].substring(0, 4)),(final_arr[i].substring(5, 7)), (String(final_arr[i].substring(8)))))
+        before_final.push(cal_day(final_arr[i].substring(8), final_arr[i].substring(5, 7), final_arr[i].substring(0, 4)))
+        final_arr[i] = final_arr[i].substring(0, 4).toString() + final_arr[i].substring(5, 7).toString() + final_arr[i].substring(8).toString()
+        special_id.push(Math.random().toString(36).substring(2))
+    }
+    //total /= 2
+    console.log(final_arr.join())
+    console.log(before_final.join())
+    //start writing ics file
+    //20210314
+    day = today.getDay()
+    day = (day + 1 + 1) % 7
+
+    var starter = year_str  +  month_str + day_str
+    var  temp_start = starter
+    var round_add = 0;
+    console.log("start looping")
+    console.log(before_final)
+    console.log(week[idx])
+    var weekday = day; //track the weekday
+    var idx = 0;//track the order of final
+
+    while(check_break()){
+        temp_start  = start_day
+        idx =  day
+        while(temp_start != before_final[idx]){
+            for(var ss = 0; ss < week[idx].length; ss++){
+                var start_str = week[idx][ss].substring(0, 7)
+                var end_str = week[idx][ss].substring(7)
+                if(!check_reserved(temp_start.toString() + start_str.toString())){
+                    var to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
+                    reserve_day.push(temp_start.toString() + start_str.toString())
+                    store_all.push(to_store)
+                    num_arr[idx] --
+                    round_add ++
+                }
+                console.log("before change")
+                console.log(temp_start.substring(7))
+                console.log(temp_start.substring(4,6))
+                console.log(temp_start.substring(0,4))
+                temp_start = cal_next_day(temp_start.substring(6), temp_start.substring(4 ,6), temp_start.substring(0,4))
+                console.log("in, loop", temp_start)
+                idx ++;
+                if(idx = total) idx = 0
+                if(!num_arr[idx]) idx ++
+                if(round_add > 0){
+                    round_add = 0
+                } else{
+                    count_fail ++
+                }
+            }
+            console.log(temp_start)
+
+        }
+
+        console.log("!!!!!")
+    }
+    //ret_window()
+    //review_windows()
+    automator()
+    console.log(big_str)
+    var final_ics = createEvent_final()
+    //makeIcsFile()
+    var ready = document.getElementById("downbtn")
+    console.log(big_str)
+    ready.href = makeIcsFile()
+    console.log("finallay")
+    document.getElementById("downbtn").style.visibility = "visible"
+}
+
 
 
 
