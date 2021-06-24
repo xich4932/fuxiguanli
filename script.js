@@ -31,9 +31,9 @@ function checking(){
         week.push(temp_arr)
     }
     console.log(week)
-    document.getElementById("table_next").style.display = "block"
-    document.getElementById("table_itself").style.display = "none"
-    //document.getElementById("table_itself").style.height = 0
+    document.getElementById("table_next").style.visibility = "visible"
+    document.getElementById("table_itself").style.visiblity = "hidden"
+    document.getElementById("table_itself").style.height = "auto"
 }
 
 var total = 1;
@@ -536,7 +536,7 @@ function create() {
     //start writing ics file
     //20210314
     day = today.getDay()
-    day = (day + 1 + 1) % 7
+    day = (day + 1 ) % 7
 
     var starter = year_str  +  month_str + day_str
     var  temp_start = starter
@@ -546,14 +546,15 @@ function create() {
     console.log(week[idx])
     var weekday = day; //track the weekday
     var idx = 0;//track the order of final
-
+    console.log(week)
     while(check_break()){
         temp_start  = start_day
         idx =  day
         while(temp_start != before_final[idx]){
-            for(var ss = 0; ss < week[idx].length; ss++){
-                var start_str = week[idx][ss].substring(0, 7)
-                var end_str = week[idx][ss].substring(7)
+            console.log(week[weekday])
+            for(var ss = 0; ss < week[weekday].length; ss++){
+                var start_str = week[weekday][ss].substring(0, 7)
+                var end_str = week[weekday][ss].substring(7)
                 if(!check_reserved(temp_start.toString() + start_str.toString())){
                     var to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
                     reserve_day.push(temp_start.toString() + start_str.toString())
@@ -565,19 +566,22 @@ function create() {
                 console.log(temp_start.substring(7))
                 console.log(temp_start.substring(4,6))
                 console.log(temp_start.substring(0,4))
-                temp_start = cal_next_day(temp_start.substring(6), temp_start.substring(4 ,6), temp_start.substring(0,4))
+                temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
+                console.log(cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4))))
                 console.log("in, loop", temp_start)
-                idx ++;
-                if(idx = total) idx = 0
-                if(!num_arr[idx]) idx ++
+                weekday ++;
+                if(weekday > 6) weekday = 0
                 if(round_add > 0){
-                    round_add = 0
-                } else{
-                    count_fail ++
+                    round_add = 0;
+                }else{
+                    count_fail ++;
                 }
             }
+            idx ++;
+            //if(idx >= total) idx = 0
+            if(!num_arr[idx]) idx ++
+            if(idx >= total) idx ++
             console.log(temp_start)
-
         }
 
         console.log("!!!!!")
