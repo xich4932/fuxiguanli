@@ -337,7 +337,6 @@ function create() {
         } else{
             count_fail ++
         }
-        console.log("!!!!!")
     }
     //ret_window()
     //review_windows()
@@ -346,7 +345,6 @@ function create() {
    //makeIcsFile()
    var ready = document.getElementById("downbtn")
    ready.href = makeIcsFile()
-   console.log("finallay")
    document.getElementById("downbtn").style.visibility = "visible"
 }
 
@@ -450,7 +448,6 @@ function automator(){
     for(var d =0; d < store_all.length; d++){
         big_str += store_all[d]
     }
-    big_str += final_str
 }
 
 
@@ -490,7 +487,7 @@ function translate_week(temp_week){
 
 function createEvent_review(id, event_name, start_day, start_time, end_time) {
     var event_str = ""
-    //for(var i = 0; i < time_start.length; i++){
+    for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
        id +
@@ -514,8 +511,8 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
        //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
        //"\n" +
        "END:VEVENT\n";
-   // }
-    return event_str 
+    }
+    return event_str
 }
 
 var final_str = ""

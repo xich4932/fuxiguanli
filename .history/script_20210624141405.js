@@ -25,15 +25,13 @@ function checking(){
         for( i = f; i <63; i+=7 ){
             if(document.getElementById('check' + String(i)).checked == true){
                 console.log(i)
-                temp_arr.push(parseInt(i/ 7))
+                temp_arr.push(parseInt(i / 7))
             }
         }
         week.push(temp_arr)
     }
     console.log(week)
-    document.getElementById("table_next").style.display = "block"
-    document.getElementById("table_itself").style.display = "none"
-    //document.getElementById("table_itself").style.height = 0
+    document.getElementById("table_next").style.visibility = "visible"
 }
 
 var total = 1;
@@ -178,76 +176,7 @@ function cal_next_day(day, month, year){
     return String(year)+String(month)+String(day)
 }
 
-/*
- *  store the time of windows 
- *
- */
-function ret_window(num){
-    if(num == 0){
-        start1 = "060000"
-        start2 = "080000"
-    }else if(num == 1){
-        start1 = "080000"
-        start2 = "100000"
-    }else if(num == 2){
-        start1 = "100000"
-        start2 = "120000"
-    }else if(num == 3){
-        start1 = "120000"
-        start2 = "140000"
-    }else if(num == 4){
-        start1 = "140000"
-        start2 = "160000"
-    }else if(num == 5){
-        start1 = "160000"
-        start2 = "180000"
-    }else if(num == 6){
-        start1 = "180000"
-        start2 = "200000"
-    }else if(num == 7){
-        start1 = "200000"
-        start2 = "220000"
-    }else if(num == 8){
-        start1 = "220000"
-        start2 = "240000"
-    }
-    return start1.toString() + start2.toString()
-}
 
-function week_handle(){
-    for(var e = 0; e < week.length; e++){
-        var temp_arr = []
-        for(var t = 0; t < week[e].length; t++){
-            console.log(week[e][t])
-            var taker = ret_window(week[e][t])
-            console.log(taker)
-            temp_arr.push(taker)
-        }
-        week[e] = temp_arr
-        //week[e].push(temp_arr)
-        temp_arr = []
-    }
-    console.log(week)
-}
-
-function check_reserved(tocheck){
-    reserve_day.map(x =>  {
-        if(x == tocheck)
-        return true
-    })
-    return false
-}
-//return true if condition is not satisfied
-//loop continues running
-function check_break(){
-    var count_remain = 0;
-    for(var d =0; d < num_arr.length; d++){
-        if(num_arr[d]) count_remain++
-    }
-    if(count_remain == total) return true
-    if(count_fail + count_remain < total) return true
-    return false
-}
 
 
 var final_arr=[]; // final dates
@@ -261,14 +190,13 @@ var exclude_str = "" //for RRULE
 var icsFile = null;
 var event_str = ""
 var until = []
-var start1 = ""
-var start2 = ""
+var window_start = ""
+var window_end = ""
 var window_str = ""
 var special_id = [] //record UID of calendar task, 
 var count_fail = 0 //when fail = number of course, function stops
-var reserve_day = [] //record timewindow that has been used
+var remain_day = [] //record timewindow that has been used
 //var final = []
-var store_all = []
 
 function create() {
     for(var i = 0; i < total; i++){
@@ -279,12 +207,8 @@ function create() {
    console.log(final_arr.join())
    console.log(course_arr.join())
    console.log(num_arr.join())
-    console.log("week: ", week)
-    //handle week array
-    week_handle()
-
    //total = 2;
-   var today = new Date();
+   var toady = new Date();
    year = today.getFullYear()
    month = today.getMonth() + 1
    day = today.getDate()
@@ -305,52 +229,26 @@ function create() {
     console.log(final_arr.join())
     console.log(before_final.join())
     //start writing ics file
-    //20210314
     day = today.getDay()
     day = (day + 1) % 7
     var idx = day;
     var starter = year.toString() +  month.toString() +  day.toString()
     var  temp_start = starter
-    var round_add = 0;
-    while(check_break()){
-        temp_start  = starter
+    while(count_fail < total){
         while(temp_start != before_final[idx]){
-            for(var ss = 0; ss < week[idx].length; ss++){
-                var start_str = week[idx][ss].substring(0, 7)
-                var end_str = week[idx][ss].substring(7)
-                if(!check_reserved(temp_start.toString() + start_str.toString())){
-                    var to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
-                    reserve_day.push(temp_start.toString() + start_str.toString())
-                    store_all.push(to_store)
-                    num_arr[idx] --
-                    round_add ++
-                }
-                temp_start = cal_next_day(temp_start.substring(6), temp_start.substring(4 ,6), temp_start.substring(0,4))
-            }
-            
+            createEvent_review(special_id[idx], course_arr[idx], temo_start, idx)
         }
-        idx ++;
-        if(idx = total) idx = 0
-        if(!num_arr[idx]) idx ++
-        if(round_add > 0){
-            round_add = 0
-        } else{
-            count_fail ++
-        }
-        console.log("!!!!!")
+        
     }
-    //ret_window()
-    //review_windows()
+    ret_window()
+    review_windows()
     automator()
    var final_ics = createEvent_final()
    //makeIcsFile()
    var ready = document.getElementById("downbtn")
    ready.href = makeIcsFile()
-   console.log("finallay")
    document.getElementById("downbtn").style.visibility = "visible"
 }
-
-
 /*
 function exdate_working(){
     var temp_size = total / 2
@@ -400,7 +298,40 @@ function final_rearrange(){
     //console.log(str)
     //console.log(final_formatted.join())
 }
-
+/*
+ *  store the time of windows 
+ *
+ */
+function ret_window(num){
+    if(num / 7 == 0){
+        window_start = "060000"
+        window_end = "080000"
+    }else if(num == 1){
+        window_start = "080000"
+        window_end = "100000"
+    }else if(num == 2){
+        window_start = "100000"
+        window_end = "120000"
+    }else if(num == 3){
+        window_start = "120000"
+        window_end = "140000"
+    }else if(num == 4){
+        window_start = "140000"
+        window_end = "160000"
+    }else if(num == 5){
+        window_start = "160000"
+        window_end = "180000"
+    }else if(num == 6){
+        window_start = "180000"
+        window_end = "200000"
+    }else if(num == 7){
+        window_start = "200000"
+        window_end = "220000"
+    }else if(num == 8){
+        window_start = "220000"
+        window_end = "240000"
+    }
+}
 /*
 function review_windows(){
     var today = new Date()
@@ -445,12 +376,18 @@ function calNextDay(month, year, day){
 }
 
 
-var big_str = ""
+
 function automator(){
-    for(var d =0; d < store_all.length; d++){
-        big_str += store_all[d]
+    var today = new Date()
+    var sizer = total / 2;
+    var temp_event
+    console.log(today.getFullYear(), today.getMonth() +1, today.getDate())
+    //document.getElementById("")
+    time_start = String(today.getFullYear()) + String(today.getMonth()+1) + String(today.getDate()) + 'T000000'
+    var weekday = translate_week((today.getDay() + 1) % 7 )
+    for(var g = 0; g < sizer; g++){
+        event_str += createEvent(course_arr[g], time_start[g], time_end[g] ,  until[g], translate_week(today.getDay()%7) )
     }
-    big_str += final_str
 }
 
 
@@ -488,25 +425,25 @@ function translate_week(temp_week){
 
 //writing ICS rule
 
-function createEvent_review(id, event_name, start_day, start_time, end_time) {
+function createEvent_review(id, event_name, start_time, end_time, window) {
     var event_str = ""
-    //for(var i = 0; i < time_start.length; i++){
+    for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
        id +
        "\n" + 
        "TZID:Asia/Shanghai\n" + 
        "DTSTART;VALUE=DATE:" +
-       start_time.toString() + "T" + start_time.toString()
+       //time_start[i] +
        "\n" +
        "DTEND;VALUE=DATE:" +
-       start_time.toString() + "T" + end_time.toString()
+      // time_end[i] +
        "\n" +
        "SUMMARY:" +
-        "review for " + event_name
+      // course_arr[i] +
        "\n" +
        "DESCRIPTION:" +
-       "review for "+ event_name +
+       "review for "+ course_arr[i] +
        "\n" +
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
@@ -514,8 +451,8 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
        //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
        //"\n" +
        "END:VEVENT\n";
-   // }
-    return event_str 
+    }
+    return event_str
 }
 
 var final_str = ""
@@ -562,7 +499,7 @@ function makeIcsFile(date, summary, description) {
       "PRODID:-//Test Cal//EN\n" +
       "VERSION:2.0\n";
      // console.log(event_str)
-      test += big_str;
+      test += event_str;
 
       test += "END:VCALENDAR";
     ///console.log(test)

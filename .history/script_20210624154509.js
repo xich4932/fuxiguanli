@@ -230,25 +230,6 @@ function week_handle(){
     console.log(week)
 }
 
-function check_reserved(tocheck){
-    reserve_day.map(x =>  {
-        if(x == tocheck)
-        return true
-    })
-    return false
-}
-//return true if condition is not satisfied
-//loop continues running
-function check_break(){
-    var count_remain = 0;
-    for(var d =0; d < num_arr.length; d++){
-        if(num_arr[d]) count_remain++
-    }
-    if(count_remain == total) return true
-    if(count_fail + count_remain < total) return true
-    return false
-}
-
 
 var final_arr=[]; // final dates
 var before_final = [] //the days before final
@@ -311,8 +292,7 @@ function create() {
     var idx = day;
     var starter = year.toString() +  month.toString() +  day.toString()
     var  temp_start = starter
-    var round_add = 0;
-    while(check_break()){
+    while(count_fail < total){
         temp_start  = starter
         while(temp_start != before_final[idx]){
             for(var ss = 0; ss < week[idx].length; ss++){
@@ -322,35 +302,30 @@ function create() {
                     var to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
                     reserve_day.push(temp_start.toString() + start_str.toString())
                     store_all.push(to_store)
-                    num_arr[idx] --
-                    round_add ++
                 }
                 temp_start = cal_next_day(temp_start.substring(6), temp_start.substring(4 ,6), temp_start.substring(0,4))
             }
             
         }
-        idx ++;
-        if(idx = total) idx = 0
-        if(!num_arr[idx]) idx ++
-        if(round_add > 0){
-            round_add = 0
-        } else{
-            count_fail ++
-        }
-        console.log("!!!!!")
+        
     }
-    //ret_window()
-    //review_windows()
+    ret_window()
+    review_windows()
     automator()
    var final_ics = createEvent_final()
    //makeIcsFile()
    var ready = document.getElementById("downbtn")
    ready.href = makeIcsFile()
-   console.log("finallay")
    document.getElementById("downbtn").style.visibility = "visible"
 }
 
-
+function check_reserved(tocheck){
+    reserve_day.map(x =>  {
+        if(x == tocheck)
+        return true
+    })
+    return false
+}
 /*
 function exdate_working(){
     var temp_size = total / 2
@@ -445,12 +420,18 @@ function calNextDay(month, year, day){
 }
 
 
-var big_str = ""
+
 function automator(){
-    for(var d =0; d < store_all.length; d++){
-        big_str += store_all[d]
+    var today = new Date()
+    var sizer = total / 2;
+    var temp_event
+    console.log(today.getFullYear(), today.getMonth() +1, today.getDate())
+    //document.getElementById("")
+    time_start = String(today.getFullYear()) + String(today.getMonth()+1) + String(today.getDate()) + 'T000000'
+    var weekday = translate_week((today.getDay() + 1) % 7 )
+    for(var g = 0; g < sizer; g++){
+        event_str += createEvent(course_arr[g], time_start[g], time_end[g] ,  until[g], translate_week(today.getDay()%7) )
     }
-    big_str += final_str
 }
 
 
@@ -490,7 +471,7 @@ function translate_week(temp_week){
 
 function createEvent_review(id, event_name, start_day, start_time, end_time) {
     var event_str = ""
-    //for(var i = 0; i < time_start.length; i++){
+    for(var i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
        id +
@@ -514,8 +495,8 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
        //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
        //"\n" +
        "END:VEVENT\n";
-   // }
-    return event_str 
+    }
+    return event_str
 }
 
 var final_str = ""
@@ -562,7 +543,7 @@ function makeIcsFile(date, summary, description) {
       "PRODID:-//Test Cal//EN\n" +
       "VERSION:2.0\n";
      // console.log(event_str)
-      test += big_str;
+      test += event_str;
 
       test += "END:VCALENDAR";
     ///console.log(test)
