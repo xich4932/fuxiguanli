@@ -236,30 +236,30 @@ function week_handle(){
     }
 
 }
-
+//return true when there is no same str
 function check_reserved(tocheck){
     reserve_day.map(x =>  {
-        if(x == tocheck)
-        return true
+        if(!x.localeCompare(tocheck))
+        return false
     })
-    return false
+    return true
 }
-//return true if condition is not satisfied
+//return true
 //loop continues running
 function check_break(){
     let count_remain = 0;
     for(let d =0; d < num_arr.length; d++){
-        if(num_arr[d]) count_remain++
+        if(num_arr[d]) return true
     }
     //console.log(count_remain)
-    if(count_remain == 0) return false
-    if(count_remain > 0) return true
+    //if(count_remain > 0) return false
+    //if(count_remain > 0) return true
     if(count_fail + count_remain < total) return true
     return false
 }
 
 
-let final_arr=[]; // final dates
+let final_arr=[]; // final dates //20210604 0 4 4 6 6
 let before_final = [] //the days before final
 let course_arr = []; //course name
 let num_arr = [] //number of topic of final for review
@@ -380,8 +380,11 @@ function automator(){
     for(let d =0; d < store_all.length; d++){
         big_str += store_all[d]
     }
-    return big_str += final_str
+    big_str += final_str
+    return
 }
+
+
 
 
 //return day in code
@@ -424,16 +427,17 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
     let event_str = ""
     //for(let i = 0; i < time_start.length; i++){
        event_str += "BEGIN:VEVENT\n" +
-       "UID:" + 
-       id +
+       "UID:" +
+           Math.random().toString(36).substring(2) +
        "\n" + 
-       "TZID:Asia/Shanghai\n" + 
-       "DTSTART;VALUE=DATE:" +
+
+       "DTSTART;" + "TZID=Asia/Shanghai:" +
        start_day.toString() + "T" + start_time.toString() +
        "\n" +
-       "DTEND;VALUE=DATE:" +
+       "DTEND;" + "TZID=Asia/Shanghai:" +
        start_day.toString() + "T" + end_time.toString() +
        "\n" +
+           "TZID:Asia/Shanghai\n" +
        "SUMMARY:" +
         "review for " + event_name +
        "\n" +
@@ -441,7 +445,10 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
        "\n" +
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
-       "ACTION:DISPLAY" +
+       "ACTION:DISPLAY\n" +
+           "DESCRIPTION:Reminder\n" +
+           "END:VALARM\n" +
+          // "\n" +
        //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + //"EXDATE="+ exclude_str +
        //"\n" +
        "END:VEVENT\n";
@@ -451,19 +458,21 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
 
 let final_str = ""
 function createEvent_final() {
+    event_str = ""
     for(let i = 0; i < total; i++){
        event_str += "BEGIN:VEVENT\n" +
        "UID:" + 
        Math.random().toString(36).substring(2) +
        "\n" + 
-       "TZID:Asia/Shanghai\n" + 
-       "DTSTART;VALUE=DATE:" +
-       //time_start[i] +
+
+       "DTSTART;" + "TZID=Asia/Shanghai:" +
        final_arr[i] + "T000000" +
        "\n" +
-       "DTEND;VALUE=DATE:" + final_arr[i] + "T235959" +
+       "DTEND;" + "TZID=Asia/Shanghai:" +
+           final_arr[i] + "T235959" +
       // time_end[i] +
        "\n" +
+       "TZID:Asia/Shanghai\n" +
        "SUMMARY:" +
        "final for "+ course_arr[i] +
        "\n" +
@@ -473,10 +482,15 @@ function createEvent_final() {
        "BEGIN:VALARM\n" +                                                                       
        "TRIGGER:-PT10M\n" +
        "ACTION:DISPLAY" +
+           "DESCRIPTION:Reminder\n" +
        //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + "EXDATE="+ exclude_str +
-       "\n" +   
-       "END:VEVENT\n";
+
+           "END:VALARM\n" +
+           "END:VEVENT\n";
+       final_str += event_str;
+        event_str  = "";
     }
+    console.log("in fun",  final_str)
     return final_str
 }
 
@@ -490,11 +504,23 @@ function makeIcsFile(date, summary, description) {
       "CALSCALE:GREGORIAN\n" +
       "METHOD:PUBLISH\n" +
       "PRODID:-//Test Cal//EN\n" +
-      "VERSION:2.0\n";
+      "VERSION:2.0\n" +
+        "BEGIN:VTIMEZONE\n"+
+        "TZID:Asia/Shanghai\n" +
+    "TZURL:http://tzurl.org/zoneinfo-outlook/Asia/Shanghai\n"+
+        "X-LIC-LOCATION:Asia/Shanghai\n" +
+    "BEGIN:STANDARD\n" +
+    "TZNAME:CST\n" +
+    "TZOFFSETFROM:+0800\n" +
+    "TZOFFSETTO:+0800\n" +
+    "DTSTART:19700101T000000\n" +
+    "END:STANDARD\n" +
+    "END:VTIMEZONE\n";
      // console.log(event_str)
       test += big_str;
 
       test += "END:VCALENDAR";
+      console.log("test cal\n", test)
     ///console.log(test)
     let data = new File([test], { type: "text/plain" });
   
@@ -517,6 +543,8 @@ function print_week(){
     }
 }
 
+
+
 function create() {
     week = JSON.parse(localStorage.getItem('arr'))
     //console.log(week)
@@ -531,7 +559,7 @@ function create() {
     //console.log("week: ", week.join())
     //handle week array
     week_handle()
-
+    //console.log("final_Arr", final_arr)
     //total = 2;
     const today = new Date();
     const year = today.getFullYear()
@@ -542,94 +570,67 @@ function create() {
     const day_str = day > 9? day.toString(): "0"+day.toString()
     start_day = cal_next_day(day_str, month_str, year_str)
     for(let i = 0; i < total; i++){
-        //console.log(final_arr[i].substring(0, 4))
-        //console.log(final_arr[i].substring(5, 7))
-        //console.log(final_arr[i].substring(8))
-        //console.log(cal_day((final_arr[i].substring(0, 4)),(final_arr[i].substring(5, 7)), (String(final_arr[i].substring(8)))))
         let str1 = final_arr[i].substring(8)
         let str2 = final_arr[i].substring(5,7)
         let str3 = final_arr[i].substring(0,4)
         before_final.push(cal_day(str1, str2, str3))
-        final_arr[i] = str1.toString() + str2.toString() + str3.toString()
+        final_arr[i] = str3.toString() + str2.toString() + str1.toString()
         special_id.push(Math.random().toString(36).substring(2))
     }
-    //total /= 2
-    //console.log("final_arr", final_arr.join())
-    //console.log("before_final", before_final.join())
     print_week()
-    //start writing ics file
-    //20210314
-    day = today.getDay()
-    day = (day + 1 ) % 7
+    dayw = today.getDay()
+    dayw = (day + 1 ) % 7
 
-    let starter = year_str  +  month_str + day_str
+   // var today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+    let starter = yyyy + mm + dd
     let  temp_start = starter
-    let round_add = 0 ;
+    console.log("before loop:", temp_start)
 
+    let round_add = 0 ;
     for(let e = 0; e < week.length; e++){
         for(let s = 0; s < week[e].length; s++){
             console.log(week[e][s])
         }
     }
-   // console.log("week length", week.length)
-    let weekday = day; //track the weekday
+
+    let weekday = dayw; //track the weekday
     let idx = 0;//track the order of final
-    //console.log(have_week)
-   // console.log( "before_final" ,before_final)
-   // console.log(starter)
-
+    //console.log("before loop:" , start_day)
+    console.log("final_Arr:",  final_arr)
     while(check_break()){
-        temp_start  = start_day
-        idx =  day
-
-
-        while(temp_start.localeCompare(before_final[idx]) ){
-            //console.log(temp_start)
-            //console.log(weekday)
-            //console.log(week[weekday])
-
-
+        temp_start  = starter
+        //idx =  dayw
+        console.log("idx", idx)
+        while( pass_day(temp_start, final_arr[idx])){
+            if(num_arr[idx] <= 0 ) break
             for(let ss = 0; ss < week[weekday].length; ss++){
-                let start_str = week[weekday][ss].substring(0, 7)
-                let end_str = week[weekday][ss].substring(7)
-                if(!check_reserved(temp_start.toString() + start_str.toString())){
+                console.log(temp_start, before_final[idx])
+                let start_str = week[weekday][ss].substring(0, 6)
+                let end_str = week[weekday][ss].substring(6)
+                if(check_reserved(temp_start.toString() + start_str.toString())){
                     let to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
                     reserve_day.push(temp_start.toString() + start_str.toString())
                     store_all.push(to_store)
                     num_arr[idx] --
                     round_add ++
+                    break;
                 }
-                temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
-                //console.log(cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4))))
-                //console.log("in, loop", temp_start)
-                weekday ++;
-                if(weekday > 6) weekday = 0
-                if(round_add > 0){
-                    round_add = 0;
-                }else{
-                    count_fail ++;
-                }
-                if(parseInt(temp_start.substring(0,4)) > 2021){
-                    return
-                }
-                console.log(temp_start, before_final[idx])
+
             }
-
-           // break;
-            //idx ++;
             temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
-            //console.log(temp_start)
-
-            weekday +=1;
+            weekday ++;
             if(weekday > 6) weekday = 0
             if(round_add > 0){
                 round_add = 0;
             }else{
                 count_fail ++;
+                round_add  = 0;
             }
-            //if(idx >= total) idx = 0
-            if(!num_arr[idx]) idx ++
-            if(idx >= total) idx ++
+            //temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
+            //weekday +=1;
 
         }
 
@@ -639,20 +640,36 @@ function create() {
         //break;
 
     }
-    /*
+    localStorage.clear()
+
 
     //ret_window()
     //review_windows()
+    createEvent_final()
     automator()
-    let final_ics = createEvent_final()
+   // let final_ics = createEvent_final() + big_str
+
     //makeIcsFile()
+    //console.log(big_str)
     let ready = document.getElementById("downbtn")
+    console.log(final_str)
     console.log(big_str)
     ready.href = makeIcsFile()
     document.getElementById("downbtn").style.visibility = "visible"
+}
 
-     */
-
+function pass_day(day, to_day){
+    //console.log(final_arr[id])
+    //let to_day = final_arr[id]
+    console.log(to_day, day)
+    if(parseInt(to_day.substring(0,4)) > parseInt(day.substring(0,4))){
+        return true
+    }else if(parseInt(to_day.substring(4,6)) > parseInt(day.substring(4,6))){
+        return true
+    }else if(parseInt(to_day.substring(6)) > parseInt(day.substring(6))){
+        return true
+    }
+    return false
 }
 
 
