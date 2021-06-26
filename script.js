@@ -14,7 +14,7 @@ function load_table(){
     }
     //let arr = [1,2,3,4]
     //test.apply(this ,arr)
-    //console.log(arr.join())
+    ////console.log(arr.join())
     table.innerHTML += str
 }
 
@@ -24,7 +24,7 @@ function checking(){
         let temp_arr = []
         for(let i = f; i <63; i+=7 ){
             if(document.getElementById('check' + String(i)).checked == true){
-                console.log(i)
+                //console.log(i)
                // week += i.toString()
                 //week += "&"
                 temp_arr.push(parseInt(i / 7))
@@ -33,8 +33,8 @@ function checking(){
         rec_week.push(temp_arr)
     }
 
-    //window.location.href = "class_main.html" + week.slice(0,-1)
-    //console.log(rec_week)
+    //window.location.href = "class.html" + week.slice(0,-1)
+    ////console.log(rec_week)
     localStorage.setItem('arr',JSON.stringify(rec_week));
     document.getElementById("table_next").style.visibility = "visible"
     document.getElementById("table_itself").style.visiblity = "hidden"
@@ -64,9 +64,9 @@ function add_course(){
 }
    
 function printing(){
-    console.log(document.getElementById('final_date1').value)
-    console.log(document.getElementById('num_course1').value)
-    console.log(document.getElementById('course_1').value)
+    //console.log(document.getElementById('final_date1').value)
+    //console.log(document.getElementById('num_course1').value)
+    //console.log(document.getElementById('course_1').value)
 
 }
 
@@ -225,9 +225,9 @@ function week_handle(){
     for(let e = 0; e < week.length; e++){
         let temp_arr = []
         for(let t = 0; t < week[e].length; t++){
-            //console.log(week[e][t])
+            ////console.log(week[e][t])
             let taker = ret_window(week[e][t])
-            //console.log(taker)
+            ////console.log(taker)
             temp_arr.push(taker)
         }
         week[e] = temp_arr
@@ -249,12 +249,15 @@ function check_reserved(tocheck){
 function check_break(){
     let count_remain = 0;
     for(let d =0; d < num_arr.length; d++){
-        if(num_arr[d]) return true
+        if(num_arr[d]){
+            count_remain ++
+        }
     }
-    //console.log(count_remain)
+    if(!count_remain) return false
     //if(count_remain > 0) return false
     //if(count_remain > 0) return true
     if(count_fail + count_remain < total) return true
+    else if(count_remain > 0) return true
     return false
 }
 
@@ -288,29 +291,29 @@ function exdate_working(){
         let str = ""
         str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "000000"
         time_start.push(str)
-        console.log("im in func")
+        //console.log("im in func")
     }
 }
  */
 /*
 function time_to_start(){
-   // console.log(final_arr.join())
+   // //console.log(final_arr.join())
     for(let t =0; t < total; t+=2){
         let str = ""
         str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "000000"
         time_start.push(str)
-        console.log("im in func")
+        //console.log("im in func")
     }
-    //console.log(time_start.join())
+    ////console.log(time_start.join())
 }
 
 function time_to_end(){
-    //console.log(final_arr.join())
+    ////console.log(final_arr.join())
     for(let t =1; t <= total; t+=2){
         let str = ""
         str = String(final_arr[t].substring(0,4)) + String(final_arr[t].substring(5,7)) + String(final_arr[t].substring(8)) + 'T' + "235959"
         time_end.push(str)
-        console.log("im in fund")
+        //console.log("im in fund")
     }
 }
  */
@@ -327,8 +330,8 @@ function final_rearrange(){
         exclude_str += temp_str
         exclude_str +=    ','
     }
-    //console.log(str)
-    //console.log(final_formatted.join())
+    ////console.log(str)
+    ////console.log(final_formatted.join())
 }
 
 /*
@@ -490,7 +493,7 @@ function createEvent_final() {
        final_str += event_str;
         event_str  = "";
     }
-    console.log("in fun",  final_str)
+    //console.log("in fun",  final_str)
     return final_str
 }
 
@@ -498,7 +501,7 @@ function createEvent_final() {
 
 function makeIcsFile(date, summary, description) {
     //event_str =
-    //console.log("eventstr: ", event_str)
+    ////console.log("eventstr: ", event_str)
     let test =
       "BEGIN:VCALENDAR\n" +
       "CALSCALE:GREGORIAN\n" +
@@ -516,12 +519,12 @@ function makeIcsFile(date, summary, description) {
     "DTSTART:19700101T000000\n" +
     "END:STANDARD\n" +
     "END:VTIMEZONE\n";
-     // console.log(event_str)
+     // //console.log(event_str)
       test += big_str;
 
       test += "END:VCALENDAR";
-      console.log("test cal\n", test)
-    ///console.log(test)
+      //console.log("test cal\n", test)
+    /////console.log(test)
     let data = new File([test], { type: "text/plain" });
   
     // If we are replacing a previously generated file we need to
@@ -538,7 +541,7 @@ let week = []
 function print_week(){
     for(let d = 0; d< week.leng; d++){
         for(let f = 0; f < week[d].length; f++){
-            console.log(week[d][f])
+            //console.log(week[d][f])
         }
     }
 }
@@ -547,19 +550,21 @@ function print_week(){
 
 function create() {
     week = JSON.parse(localStorage.getItem('arr'))
-    //console.log(week)
+    console.log("here")
+    //document.getElementById("addbtn").style.display = "none"
+    ////console.log(week)
     for(let i = 0; i < total; i++){
         final_arr.push(document.getElementById("final_"+String(i)).value)
         num_arr.push(document.getElementById("num_"+String(i)).value)
         course_arr.push(document.getElementById("course_"+String(i)).value)
     }
-    console.log(final_arr.join())
-    console.log(course_arr.join())
-    console.log(num_arr.join())
-    //console.log("week: ", week.join())
+    //console.log(final_arr.join())
+    //console.log(course_arr.join())
+    //console.log(num_arr.join())
+    ////console.log("week: ", week.join())
     //handle week array
     week_handle()
-    //console.log("final_Arr", final_arr)
+    ////console.log("final_Arr", final_arr)
     //total = 2;
     const today = new Date();
     const year = today.getFullYear()
@@ -587,31 +592,33 @@ function create() {
     let yyyy = today.getFullYear();
     let starter = yyyy + mm + dd
     let  temp_start = starter
-    console.log("before loop:", temp_start)
+    //console.log("before loop:", temp_start)
 
     let round_add = 0 ;
     for(let e = 0; e < week.length; e++){
         for(let s = 0; s < week[e].length; s++){
-            console.log(week[e][s])
+            //console.log(week[e][s])
         }
     }
 
     let weekday = dayw; //track the weekday
     let idx = 0;//track the order of final
-    //console.log("before loop:" , start_day)
+    console.log("before loop:" , start_day)
     console.log("final_Arr:",  final_arr)
     while(check_break()){
+        console.log("here")
         temp_start  = starter
         //idx =  dayw
-        console.log("idx", idx)
+        //console.log("idx", idx)
         while( pass_day(temp_start, final_arr[idx])){
             if(num_arr[idx] <= 0 ) break
             for(let ss = 0; ss < week[weekday].length; ss++){
-                console.log(temp_start, before_final[idx])
+                //console.log(temp_start, before_final[idx])
                 let start_str = week[weekday][ss].substring(0, 6)
                 let end_str = week[weekday][ss].substring(6)
                 if(check_reserved(temp_start.toString() + start_str.toString())){
                     let to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
+                    console.log(to_store)
                     reserve_day.push(temp_start.toString() + start_str.toString())
                     store_all.push(to_store)
                     num_arr[idx] --
@@ -629,6 +636,7 @@ function create() {
                 count_fail ++;
                 round_add  = 0;
             }
+            console.log("while")
             //temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
             //weekday +=1;
 
@@ -640,28 +648,29 @@ function create() {
         //break;
 
     }
-    localStorage.clear()
-
-
-    //ret_window()
-    //review_windows()
     createEvent_final()
     automator()
+    console.log(final_str)
+    console.log(big_str)
+    localStorage.clear()
+    //ret_window()
+    //review_windows()
+
+
    // let final_ics = createEvent_final() + big_str
 
     //makeIcsFile()
-    //console.log(big_str)
+    ////console.log(big_str)
     let ready = document.getElementById("downbtn")
-    console.log(final_str)
-    console.log(big_str)
+
     ready.href = makeIcsFile()
     document.getElementById("downbtn").style.visibility = "visible"
 }
 
 function pass_day(day, to_day){
-    //console.log(final_arr[id])
+    ////console.log(final_arr[id])
     //let to_day = final_arr[id]
-    console.log(to_day, day)
+    //console.log(to_day, day)
     if(parseInt(to_day.substring(0,4)) > parseInt(day.substring(0,4))){
         return true
     }else if(parseInt(to_day.substring(4,6)) > parseInt(day.substring(4,6))){

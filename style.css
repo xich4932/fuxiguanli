@@ -20,11 +20,30 @@
 	box-shadow: 2px 2px 3px #999;
 }
 */
-.table_style{
-	background-color: whitesmoke;
+
+.table_style, #add_course_table{
+	background-color: transparent;
 	width: 80%;
 	height: 100%;
 	margin: auto;
+
+	border: none;
 	border-radius: 1pc;
-	border-color: teal;
+
+
+}
+body {
+	background-image: linear-gradient(to right, #9c2b3b , #2482ad);
+}
+td{
+	border: none;
+}
+th{
+	border: none;
+}
+
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+	background-color: #2482ad !important;
+	border-color: #2482ad;
 }
