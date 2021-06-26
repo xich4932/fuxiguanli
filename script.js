@@ -432,6 +432,7 @@ function createEvent_review(id, event_name, start_day, start_time, end_time) {
        event_str += "BEGIN:VEVENT\n" +
        "UID:" +
            Math.random().toString(36).substring(2) +
+
        "\n" + 
 
        "DTSTART;" + "TZID=Asia/Shanghai:" +
