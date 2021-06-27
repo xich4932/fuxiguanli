@@ -248,7 +248,7 @@ function check_reserved(tocheck){
 
     }
      */
-    console.log(reserve_day.includes(tocheck))
+    //console.log(reserve_day.includes(tocheck))
     if(reserve_day.includes(tocheck)) return false
 
     return true
@@ -259,10 +259,15 @@ function check_break(){
     let count_remain = 0;
     let temp_break = []
     for(let d =0; d < num_arr.length; d++){
+        console.log(d, num_arr[d])
         if(num_arr[d]){
             temp_break.push(d)
         }
     }
+    //console.log("-------------")
+    //console.log(count_fail,  temp_break)
+    //console.log("-------------")
+    if(count_fail.length > temp_break.length) return false
     if(count_fail.length == temp_break.length){
         for(let s =0; s < count_fail.length; s++){
             if(count_fail[s] != temp_break) return true
@@ -506,7 +511,6 @@ function createEvent_final() {
        "ACTION:DISPLAY" +
            "DESCRIPTION:Reminder\n" +
        //"RRULE: FREQ=WEEKLY; WKST=SUN; BYDAY= " + r_week + "EXDATE="+ exclude_str +
-
            "END:VALARM\n" +
            "END:VEVENT\n";
        final_str += event_str;
@@ -568,7 +572,12 @@ function print_week(){
 
 
 function create() {
-    week = JSON.parse(localStorage.getItem('arr'))
+   // week = JSON.parse(localStorage.getItem('arr'))
+    //let week = []
+    for(var t = 0; t < 7; t++){
+        week.push([1,2,4,5,7,8])
+    }
+    console.log(week)
     //console.log("here")
     //document.getElementById("addbtn").style.display = "none"
     ////console.log(week)
@@ -583,6 +592,7 @@ function create() {
     ////console.log("week: ", week.join())
     //handle week array
     week_handle()
+    console.log(week)
     ////console.log("final_Arr", final_arr)
     //total = 2;
     const today = new Date();
@@ -612,9 +622,9 @@ function create() {
    // let starter = yyyy + mm + dd
     //console.log("before", starter, starter.substring(6), starter.substring(4,6), starter.substring(0,4) )
     let starter =  cal_next_day(today.getDate(), today.getMonth() + 1, today.getFullYear())
-    console.log(starter.substring(6))//20210624
-    console.log(starter.substring(4,6))
-    console.log(starter.substring(0,4))
+    //console.log(starter.substring(6))//20210624
+    //console.log(starter.substring(4,6))
+    //console.log(starter.substring(0,4))
    //console.log("start:", temp_start)
     let  temp_start = starter
     //console.log("before loop:", temp_start)
@@ -664,26 +674,25 @@ function create() {
             temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
             weekday ++;
             if(weekday > 6) weekday = 0
-
-            //console.log("while")
-            //temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
-            //weekday +=1;
         }
         if(round_add > 0){
             round_add = 0;
         }else{
-            count_fail.push(idx);
+            if(!count_fail.includes(idx)) count_fail.push(idx);
+            console.log(idx)
             round_add  = 0;
         }
         idx ++
         if(num_arr[idx] <= 0) idx ++
         if(idx >= total) idx = 0
         //break;
-
+        //no idea why it didn't stop,
+        //add  following to stop function
+        /*
         stop  ++
-        if(stop > 100) break;
+        if(stop > 100) break
 
-
+         */
     }
     createEvent_final()
     automator()
