@@ -236,12 +236,19 @@ function week_handle(){
     }
 
 }
-//return true when there is no same str
+//return true  no  reserved day found
 function check_reserved(tocheck){
-    reserve_day.map(x =>  {
-        if(!x.localeCompare(tocheck))
-        return false
-    })
+//    console.log(reserve_day)
+  //  console.log(tocheck)
+    /*
+    for(r = 0; r < reserve_day.length; r++){
+        var temp_val = reserve_day[r]
+
+    }
+     */
+    console.log(reserve_day.includes(tocheck))
+    if(reserve_day.includes(tocheck)) return false
+
     return true
 }
 //return true
@@ -604,14 +611,16 @@ function create() {
 
     let weekday = dayw; //track the weekday
     let idx = 0;//track the order of final
-    console.log("before loop:" , start_day)
-    console.log("final_Arr:",  final_arr)
+    //console.log("before loop:" , start_day)
+    //console.log("final_Arr:",  final_arr)
+    console.log(before_final)
     while(check_break()){
-        console.log("here")
+        //console.log("here")
         temp_start  = starter
         //idx =  dayw
         //console.log("idx", idx)
         while( pass_day(temp_start, final_arr[idx])){
+            console.log("!!!",temp_start, final_arr[idx] )
             if(num_arr[idx] <= 0 ) break
             for(let ss = 0; ss < week[weekday].length; ss++){
                 //console.log(temp_start, before_final[idx])
@@ -619,14 +628,15 @@ function create() {
                 let end_str = week[weekday][ss].substring(6)
                 if(check_reserved(temp_start.toString() + start_str.toString())){
                     let to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
-                    console.log(to_store)
+                    //console.log(to_store)
                     reserve_day.push(temp_start.toString() + start_str.toString())
                     store_all.push(to_store)
                     num_arr[idx] --
                     round_add ++
                     break;
+                }else{
+                    continue
                 }
-
             }
             temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
             weekday ++;
@@ -637,7 +647,7 @@ function create() {
                 count_fail ++;
                 round_add  = 0;
             }
-            console.log("while")
+            //console.log("while")
             //temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
             //weekday +=1;
 
@@ -672,6 +682,7 @@ function pass_day(day, to_day){
     ////console.log(final_arr[id])
     //let to_day = final_arr[id]
     //console.log(to_day, day)
+
     if(parseInt(to_day.substring(0,4)) > parseInt(day.substring(0,4))){
         return true
     }else if(parseInt(to_day.substring(4,6)) > parseInt(day.substring(4,6))){
