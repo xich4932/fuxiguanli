@@ -123,7 +123,7 @@ cal_day(1,10,2021)
 */
 
 function cal_next_day(day, month, year){
-    if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){ // month end in 30 days
+    if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){ // month end in 31 days
         if(month == 12 && day == 31){//next day is new year
             return (year+1).toString() + "0101"
         }
@@ -260,11 +260,13 @@ function check_break(){
             count_remain ++
         }
     }
-    if(!count_remain) return false
     //if(count_remain > 0) return false
     //if(count_remain > 0) return true
+    console.log(count_fail, count_remain, total)
     if(count_fail + count_remain < total) return true
-    else if(count_remain > 0) return true
+    //if(!count_remain) return false
+    if(count_fail > count_remain) return false
+    if(count_remain > 0) return true
     return false
 }
 
@@ -480,7 +482,7 @@ function createEvent_final() {
        final_arr[i] + "T000000" +
        "\n" +
        "DTEND;" + "TZID=Asia/Shanghai:" +
-           final_arr[i] + "T235959" +
+           final_arr[i] + "T235959" + 
       // time_end[i] +
        "\n" +
        "TZID:Asia/Shanghai\n" +
@@ -608,7 +610,7 @@ function create() {
             //console.log(week[e][s])
         }
     }
-
+    let stop = 0;
     let weekday = dayw; //track the weekday
     let idx = 0;//track the order of final
     //console.log("before loop:" , start_day)
@@ -617,11 +619,16 @@ function create() {
     while(check_break()){
         //console.log("here")
         temp_start  = starter
+        weekday = dayw;
         //idx =  dayw
         //console.log("idx", idx)
         while( pass_day(temp_start, final_arr[idx])){
             console.log("!!!",temp_start, final_arr[idx] )
             if(num_arr[idx] <= 0 ) break
+            if(exdate(temp_start)){
+                temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
+                continue
+            }
             for(let ss = 0; ss < week[weekday].length; ss++){
                 //console.log(temp_start, before_final[idx])
                 let start_str = week[weekday][ss].substring(0, 6)
@@ -641,23 +648,26 @@ function create() {
             temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
             weekday ++;
             if(weekday > 6) weekday = 0
-            if(round_add > 0){
-                round_add = 0;
-            }else{
-                count_fail ++;
-                round_add  = 0;
-            }
+
             //console.log("while")
             //temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
             //weekday +=1;
-
         }
-
+        if(round_add > 0){
+            round_add = 0;
+        }else{
+            count_fail ++;
+            round_add  = 0;
+        }
         idx ++
         if(num_arr[idx] <= 0) idx ++
         if(idx >= total) idx = 0
         //break;
+        /*
+        stop  ++
+        if(stop > 30) break;
 
+         */
     }
     createEvent_final()
     automator()
@@ -691,6 +701,10 @@ function pass_day(day, to_day){
         return true
     }
     return false
+}
+
+function exdate(day){
+    return final_arr.includes(day)
 }
 
 
