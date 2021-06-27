@@ -39,9 +39,11 @@ function checking(){
     document.getElementById("table_next").style.visibility = "visible"
     document.getElementById("table_itself").style.visiblity = "hidden"
     document.getElementById("table_itself").style.height = "auto"
+    //console.log(rec_week)
 }
 
 let total = 1;
+// [1, 2, 4, 5, 7, 8]
 //test 
 /*
 week.push([0])
@@ -255,19 +257,26 @@ function check_reserved(tocheck){
 //loop continues running
 function check_break(){
     let count_remain = 0;
+    let temp_break = []
     for(let d =0; d < num_arr.length; d++){
         if(num_arr[d]){
-            count_remain ++
+            temp_break.push(d)
         }
     }
-    //if(count_remain > 0) return false
-    //if(count_remain > 0) return true
-    console.log(count_fail, count_remain, total)
+    if(count_fail.length == temp_break.length){
+        for(let s =0; s < count_fail.length; s++){
+            if(count_fail[s] != temp_break) return true
+        }
+        return false
+    }else{
+        return true
+    }
+    /*
     if(count_fail + count_remain < total) return true
-    //if(!count_remain) return false
     if(count_fail > count_remain) return false
     if(count_remain > 0) return true
     return false
+     */
 }
 
 
@@ -286,7 +295,7 @@ let start1 = ""
 let start2 = ""
 let window_str = ""
 let special_id = [] //record UID of calendar task,
-let count_fail = 0 //when fail = number of course, function stops
+let count_fail = [] //when fail = number of course, function stops
 let reserve_day = [] //record timewindow that has been used
 //let final = []
 let store_all = []
@@ -560,7 +569,7 @@ function print_week(){
 
 function create() {
     week = JSON.parse(localStorage.getItem('arr'))
-    console.log("here")
+    //console.log("here")
     //document.getElementById("addbtn").style.display = "none"
     ////console.log(week)
     for(let i = 0; i < total; i++){
@@ -600,7 +609,13 @@ function create() {
     let dd = String(today.getDate()).padStart(2, '0');
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = today.getFullYear();
-    let starter = yyyy + mm + dd
+   // let starter = yyyy + mm + dd
+    //console.log("before", starter, starter.substring(6), starter.substring(4,6), starter.substring(0,4) )
+    let starter =  cal_next_day(today.getDate(), today.getMonth() + 1, today.getFullYear())
+    console.log(starter.substring(6))//20210624
+    console.log(starter.substring(4,6))
+    console.log(starter.substring(0,4))
+   //console.log("start:", temp_start)
     let  temp_start = starter
     //console.log("before loop:", temp_start)
 
@@ -615,15 +630,16 @@ function create() {
     let idx = 0;//track the order of final
     //console.log("before loop:" , start_day)
     //console.log("final_Arr:",  final_arr)
-    console.log(before_final)
+    //console.log(before_final)
     while(check_break()){
         //console.log("here")
         temp_start  = starter
-        weekday = dayw;
+        weekday = dayw
+        round_add = 0
         //idx =  dayw
         //console.log("idx", idx)
         while( pass_day(temp_start, final_arr[idx])){
-            console.log("!!!",temp_start, final_arr[idx] )
+            //console.log("!!!",temp_start, final_arr[idx] )
             if(num_arr[idx] <= 0 ) break
             if(exdate(temp_start)){
                 temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
@@ -656,23 +672,23 @@ function create() {
         if(round_add > 0){
             round_add = 0;
         }else{
-            count_fail ++;
+            count_fail.push(idx);
             round_add  = 0;
         }
         idx ++
         if(num_arr[idx] <= 0) idx ++
         if(idx >= total) idx = 0
         //break;
-        /*
-        stop  ++
-        if(stop > 30) break;
 
-         */
+        stop  ++
+        if(stop > 100) break;
+
+
     }
     createEvent_final()
     automator()
-    console.log(final_str)
-    console.log(big_str)
+    //console.log(final_str)
+    //console.log(big_str)
     localStorage.clear()
     //ret_window()
     //review_windows()
