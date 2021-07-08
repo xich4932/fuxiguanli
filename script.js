@@ -572,11 +572,12 @@ function print_week(){
 
 
 function create() {
-   // week = JSON.parse(localStorage.getItem('arr'))
+    week = JSON.parse(localStorage.getItem('arr'))
     //let week = []
+    /*
     for(var t = 0; t < 7; t++){
         week.push([1,2,4,5,7,8])
-    }
+    }*/
     console.log(week)
     //console.log("here")
     //document.getElementById("addbtn").style.display = "none"
@@ -696,17 +697,9 @@ function create() {
     }
     createEvent_final()
     automator()
-    //console.log(final_str)
-    //console.log(big_str)
+    
     localStorage.clear()
-    //ret_window()
-    //review_windows()
-
-
-   // let final_ics = createEvent_final() + big_str
-
-    //makeIcsFile()
-    ////console.log(big_str)
+    
     let ready = document.getElementById("downbtn")
 
     ready.href = makeIcsFile()
