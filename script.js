@@ -652,10 +652,13 @@ function create() {
         while( pass_day(temp_start, final_arr[idx])){
             //console.log("!!!",temp_start, final_arr[idx] )
             if(num_arr[idx] <= 0 ) break
+            /*
             if(exdate(temp_start)){
                 temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
                 continue
             }
+
+             */
             for(let ss = 0; ss < week[weekday].length; ss++){
                 //console.log(temp_start, before_final[idx])
                 let start_str = week[weekday][ss].substring(0, 6)
