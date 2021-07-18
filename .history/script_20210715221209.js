@@ -548,7 +548,7 @@ function makeIcsFile(date, summary, description) {
       test += "END:VCALENDAR";
       //console.log("test cal\n", test)
     /////console.log(test)
-    //console.log(test)
+    console.log(test)
     let data = new File([test], { type: "text/plain" });
   
     // If we are replacing a previously generated file we need to
