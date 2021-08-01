@@ -666,7 +666,8 @@ function create() {
                 //console.log(temp_start, before_final[idx])
                 let start_str = week[weekday][ss].substring(0, 6)
                 let end_str = week[weekday][ss].substring(6)
-                if(check_reserved(temp_start.toString() + start_str.toString())){
+                //allow activity overlapped
+               // if(check_reserved(temp_start.toString() + start_str.toString())){
                     console.log("wanted");
                     console.log(course_arr[idx], temp_start, start_str);
                     let to_store = createEvent_review(special_id[idx], course_arr[idx], temp_start, start_str, end_str)
@@ -676,9 +677,9 @@ function create() {
                     num_arr[idx] --
                     round_add ++
                     break;
-                }else{
-                    continue
-                }
+              //  }else{
+                //    continue
+                //}
 
             }
             temp_start = cal_next_day(parseInt(temp_start.substring(6)), parseInt(temp_start.substring(4 ,6)), parseInt(temp_start.substring(0,4)))
